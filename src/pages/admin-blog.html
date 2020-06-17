@@ -1,0 +1,135 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				<div>
+					Messages: ${adminMessage}
+				</div>
+				<div>Blog list:</div>
+				<table class="tbl-list" aurelia-table="data.bind: list; display-data.bind: $displayData; current-page.bind: currentPage; page-size.bind: pageSize; total-items.bind: totalItems;">
+					<thead>
+						<tr>
+							<th aut-sort="key: uid">Uid</th>
+							<th aut-sort="key: txt_title">Title</th>
+							<th aut-sort="key: txt_url_slug">Url Slug</th>
+							<th aut-sort="key: b_publish">Published?</th>
+							<th aut-sort="key: ts_publish_date">Published Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr repeat.for="n of $displayData" click.delegate="listClicked(n)">
+							<td>${n.uid}</td>
+							<td>${n.txt_title}</td>
+							<td>${n.txt_url_slug}</td>
+							<td>${n.b_publish}</td>
+							<td>${n.ts_publish_date | formatDate: 'M/D/YYYY'}</td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+					<div class="col-md-9">
+						<aut-pagination current-page.bind="currentPage" page-size.bind="pageSize" total-items.bind="totalItems" pagination-size.bind="5" boundary-links.bind="true"> </aut-pagination>
+					</div>
+			
+					<div class="col-md-3">
+						<div class="form-inline">
+							<div class="form-group pull-right">
+								<label for="pageSize">Page Size: </label>
+								<select value.bind="pageSize" id="pageSize" class="form-control">
+									<option model.bind="5">5</option>
+									<option model.bind="10">10</option>
+									<option model.bind="20">20</option>
+									<option model.bind="50">50</option>
+								</select>
+							</div>
+						</div>
+					</div>
+			
+				</div>
+				<div>
+					<input style="float:left;" type="button" value="Refresh Preview" click.delegate="getTinyBody()">
+					<input style="float:right;" type="button" click.delegate="newRecord()" value="New" />
+					<input style="float:right;" type="button" click.delegate="saveRecord()" value="Save" />
+					<input style="float:right;" type="button" click.delegate="deleteRecord()" value="Delete" />
+				</div>
+			
+				<div class="formBody" style="border: 1px solid red;">
+					<div class="formLabel">This is the results of the record clicked:</div>
+					<div class="formRow">
+						<div class="formElement25">
+							<div class="formElementLabel">Uid</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" disabled type="textbox" value.bind="main.uid" />
+							</div>
+						</div>
+						<div class="formElement25">
+							<div class="formElementLabel">Created</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" disabled type="textbox" value.bind="main.ts_created | formatDate: 'M/D/YYYY HH:mm:ss'" />
+							</div>
+						</div>
+						<div class="formElement25">
+							<div class="formElementLabel">Last Updated</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" disabled type="textbox" value.bind="main.ts_last_updated | formatDate: 'M/D/YYYY HH:mm:ss'" />
+							</div>
+						</div>
+						<div class="formElement25">
+							<div class="formElementLabel">&nbsp;</div>
+							<div class="formElementValue">&nbsp;</div>
+						</div>
+					</div>
+			
+			
+			
+					<div class="formRow">
+						<div class="formElement50">
+							<div class="formElementLabel">Title</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" type="textbox" value.bind="main.txt_title" />
+							</div>
+						</div>
+						<div class="formElement50">
+							<div class="formElementLabel">URL Slug</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" type="textbox" value.bind="main.txt_url_slug" />
+							</div>
+						</div>
+					</div>
+			
+					<div class="formRow">
+						<div class="formElement25">
+							<div class="formElementLabel">Published?</div>
+							<div class="formElementValue">
+								<input type="checkbox" checked.bind="main.b_publish" />
+							</div>
+						</div>
+						<div class="formElement25">
+							<div class="formElementLabel">Publish Date</div>
+							<div class="formElementValue">
+								<input class="formElementInput100" type="textbox" value.bind="main.ts_publish_date | formatDate:'M/D/YYYY' & updateTrigger:'blur'" />
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div>
+					Body:
+				</div>
+				<div id="tinyBody">
+			
+				</div>
+			
+				<div ref="previewDiv">
+			
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+
+

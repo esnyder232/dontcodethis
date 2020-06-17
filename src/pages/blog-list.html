@@ -1,0 +1,30 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				<response-message class="responseMessageCustomElement" view-model.ref="msgPageGeneral"></response-message>
+				<div class="generalPageHeader">
+					Blog List
+				</div>
+				<div class="generalPageBody ${bGetList ? 'spinner' : ''}">
+					<div class="blogListItem" repeat.for="r of list">
+						<div class="blogListTitle">
+							<div class="blogListHyperlink" click.delegate="globalfuncs.navToBlog(r.uid, r.txt_url_slug)">
+								${r.txt_title}
+							</div>
+						</div>
+						<div class="blogListDate">
+							Published ${r.ts_publish_date | formatDate: 'MM/DD/YYYY'}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+
+

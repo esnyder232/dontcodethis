@@ -1,0 +1,474 @@
+
+html {
+	height:100%;
+	width:100%;
+}
+
+.body {
+	background-color: #181a1b;
+	color: #e8e6e3;
+	font-family: 'Lucida Sans';
+	font-size: 16px;
+	margin:0px;
+	height:100%;
+}
+
+.siteHeader {
+	width:99%;
+	padding: 2px 0.5% 2px 0.5%;
+	float:left;
+	background-color:black;
+}
+
+.navbarContainer {
+	width:100%;
+	float:left;
+}
+
+.navbarContainerMobile {
+	width:100%;
+	float:left;
+}
+
+.navbarLogo {
+	float:left;
+	font-size: 36px;
+}
+
+.navbarLogo:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.navbar {
+	float:left;
+	padding-top: 15px;
+	font-size: 18px;
+}
+
+.navbarItem {
+	float:left;
+	padding: 0px 6px 0px 6px;
+}
+
+.navbarProfile {
+	float:right;
+	padding-top: 16px;
+	font-size: 18px;
+}
+
+.profileItem {
+	float:right;
+	padding: 0px 0px 0px 6px;
+}
+
+.svgIcon {
+	width:100%;
+	height:100%;
+	float:left;
+}
+
+.hamburgerMenuIcon {
+	width:50px;
+	height:40px;
+	float:left;
+}
+
+.hamburgerMenuContainer {
+	position: absolute;
+	width:100%;
+	height:100%;
+	float:left;
+	z-index: 300;
+}
+
+.hamburgerMenuBackground {
+	width:100%;
+	height:100%;
+	float:left;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.hamburgerMenu {
+	width:60%;
+	min-height:10px;
+	float:left;
+	background-color: black;
+}
+
+.hamburgerMenuNavbarItem {
+	width:100%;
+	float:left;
+	font-size:18px;
+	padding: 4px;
+}
+
+.appRouterView {
+	float:left;
+	width:100%;
+	z-index: 100;
+	height:100%;
+}
+
+input[type='textbox'], input[type='button'], textarea, select {
+	background-color:#121415;
+	border-color:#575757;
+	color:#e8e6e3;
+}
+
+.hyperlink {
+	text-decoration: underline;
+	color:rgb(51, 125, 255);
+	cursor: pointer;
+}
+
+
+
+.aut-sort:before{
+    font-family: 'Font Awesome 5 Free';
+    padding-right: 0.5em;
+    width: 1.28571429em;
+    display: inline-block;
+    text-align: center;
+}
+
+.aut-sortable:before{
+	font-family: 'Font Awesome 5 Free';
+	content: "\f0dc";
+}
+
+.aut-asc:before{
+	font-family: 'Font Awesome 5 Free';
+	content: "\f160";
+}
+
+.aut-desc:before{
+	font-family: 'Font Awesome 5 Free';
+	content: "\f161";
+}
+
+
+.tbl-list {
+	border: 1px solid gray;
+	border-collapse: collapse;
+	width:100%;
+}
+
+.tbl-list th {
+	border: 1px solid #ddd;
+	padding: 8px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+
+.tbl-list td {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+.tbl-list tr:nth-child(even){background-color: #f2f2f2;}
+
+.tbl-list tr:hover {
+	background-color: #ddd;
+	cursor: pointer;
+}
+
+.formBody {
+	width: 100%;
+	float:left;
+}
+
+.formLabel {
+	width:100%;
+	float:left;
+}
+
+.formRow {
+	width:100%;
+	float:left;
+}
+
+.formElement25 {
+	width: 23%;
+	float:left;
+	padding: 0.5% 1% 0.5% 1%;
+}
+
+.formElement50 {
+	width: 48%;
+	float:left;
+	padding: 0.5% 1% 0.5% 1%;
+}
+
+.formElement100 {
+	width: 98%;
+	float:left;
+	padding: 0.5% 1% 0.5% 1%;
+}
+
+.formElementLabel {
+	padding: 0px 0px 2px 0px;
+	width: 100%;
+}
+
+.formElementValue {
+	width: 100%;
+}
+
+.formElementInput100 {
+	width: 98%;
+}
+
+.formElementInput50 {
+	width: 48%;
+}
+
+.formElementTextarea100 {
+	width: 98%;
+}
+
+.formElementButtonSubmit {
+	float:right;
+}
+
+
+.pageContainer {
+	width:100%;
+	height:100%;
+	float:left;
+}
+
+.pageBackground {
+	width:100%;
+	min-height:100%;
+	float:left;
+	background-image: url("../../images/dragon-warrior-title-tile-dark.png");
+	background-repeat: repeat;
+	background-size: 128px 128px;
+	padding:0px 0px 64px 0px
+}
+
+.pageContent {
+	width:59%;
+	margin-left: 20%;
+	float:left;
+	background-color: black;
+	position: relative;
+	padding: 0% 0.5% 0% 0.5%;
+	min-height: 300px;
+}
+
+.pageSection {
+	width:100%;
+	float:left;
+	padding: 0% 0% 64px 0%;
+	border-bottom:3px solid #e8e6e3;
+	position:relative;
+}
+
+.pageSectionTitle {
+	width:100%;
+	float:left;
+	font-size:28px;
+	font-weight:bold;
+}
+
+.pageSectionBody {
+	width:99%;
+	float:left;
+	padding: 0px 0.5% 0px 0.5%;
+}
+
+
+.blogBody {
+	width:100%;
+	float:left;
+	background-color: black;
+}
+
+h1.blogTitle {
+	width:100%;
+	float:left;
+	margin-bottom:4px;
+}
+
+h3.blogPublish {
+	width:100%;
+	float:left;
+	font-style: italic;
+	margin-top: 0px;
+}
+
+.blogCommentTitle {
+	width:100%;
+	float:left;
+	font-size:28px;
+	font-weight:bold;
+}
+
+.blogCommentContainer {
+	width:100%;
+	float:left;
+	margin-bottom:24px;
+}
+
+.blogCommentHead {
+	width:100%;
+	float:left;
+	border-style: dotted;
+    border-width: 0px 0px 1px 0px;
+    border-color: rgb(232, 230, 227);
+}
+
+.blogCommentName {
+	float:left;
+	font-weight: bold;
+	text-decoration: underline;
+	word-wrap: break-word;
+}
+
+.blogCommentDate {
+	float:right;
+}
+
+.blogCommentBody {
+	width:100%;
+	float:left;
+}
+
+.submitCommentContainer {
+	float:left;
+	width:100%;
+	background-color:#161616;
+	position: relative;
+}
+
+
+.blogCommentText {
+	margin: 0px 0px 0px 0px;
+	display: block;
+    font-family: monospace;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.pageCommentPreviewContainer {
+	float:left;
+	width:100%;
+}
+
+.pageCommentPreviewTitle {
+	width:100%;
+	float:left;
+	font-size:18px;
+	font-weight:bold;
+}
+
+.pagePadding {
+	padding: 0px 4px;
+}
+
+@keyframes spinner {
+	to {transform: rotate(360deg);}
+}
+
+.spinner::after {
+	content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px;
+    margin-left: -25px;
+    border-radius: 50%;
+    border: 8px solid #fff;
+    border-top-color: #000;
+	animation: spinner 1.0s linear infinite;
+	z-index: 120;
+}
+
+.spinner::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 110;
+}
+
+.responseMessageCustomElement {
+	float:left;
+	width:100%;
+}
+
+.responseMessageContainer {
+	float:left;
+	padding:2px;
+}
+
+.messageError {
+	background-color:crimson;
+	border: 3px solid darkred;
+}
+
+.messageSuccess {
+	background-color:lightcyan;
+	border: 3px solid lightblue;
+}
+
+.hide {
+	display:none;
+}
+
+.generalPageHeader {
+	float:left;
+	width:100%;
+	font-size: 36px;
+	margin-bottom:24px;
+}
+
+.generalPageBody {
+	float:left;
+	width:100%;
+	position:relative;
+}
+
+.blogListItem {
+	float:left;
+	width:100%;
+	margin:0px 0px 50px 6px;
+}
+
+.blogListTitle {
+	float:left;
+	width:100%;
+	font-size: 24px;
+}
+
+.blogListHyperlink {
+	float:left;
+}
+
+.blogListHyperlink:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.blogListDate {
+	float:left;
+	width:100%;
+	font-style: italic;
+}
+
+
+@media only screen and (max-width: 600px) {
+	.pageContent {
+		width:90%;
+		float:left;
+		margin-left:5%;
+		background-color: black;
+	}
+}

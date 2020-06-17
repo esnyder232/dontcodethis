@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1586938718__2020-04-15_04-18-38","dtCreated":"2020-04-15_04-18-38","dtCreated_X":"1586938718","migrations":[{"ts_log_time":"2020-04-15T07:45:00.592Z","txt_message":"alter table audit_error\r\nadd txt_user_message text\r\n"}]}

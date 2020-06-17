@@ -1,0 +1,10 @@
+{
+	"pg_user": "adminUser",
+	"pg_host": "localhost",
+	"pg_database": "dbname",
+	"pg_password": "pass",
+	"pg_port": "5432",
+	"postgres_logfiles_dir": "C:\\Program Files\\PostgreSQL\\12\\data\\log",
+	"dct_schema_migration_files_dir": "C:\\node_projects\\dontcodethis\\schema_migration_files",
+	"dct_coretable_migration_files_dir": "C:\\node_projects\\dontcodethis\\coretable_migration_files"
+}

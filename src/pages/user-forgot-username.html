@@ -1,0 +1,22 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				hello from user login
+				<div>
+					<span>Email:</span>
+					<input type="text" value.bind="email"/>
+				</div>
+				<div>
+					<input type="button" value="Submit" click.delegate="forgotUsername()" />
+				</div>
+				<div>
+					${forgotMessage}
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

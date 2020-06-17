@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1583884068__2020-03-10_19-47-48","dtCreated":"2020-03-10_19-47-48","dtCreated_X":"1583884068","migrations":[{"ts_log_time":"2020-03-10T23:46:02.547Z","txt_message":"create table testing_new_table(\r\n\tuid int generated always as identity,\r\n\tv_name text\r\n);\r\n"}]}

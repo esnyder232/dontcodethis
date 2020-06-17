@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1583884369__2020-03-10_19-52-49","dtCreated":"2020-03-10_19-52-49","dtCreated_X":"1583884369","migrations":[{"ts_log_time":"2020-03-10T23:52:27.929Z","txt_message":"drop table test_new_table\r\n"},{"ts_log_time":"2020-03-10T23:52:36.490Z","txt_message":"drop table testing_new_table\r\n"}]}

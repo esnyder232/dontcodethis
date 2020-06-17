@@ -1,0 +1,91 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				<div class="pageSection ${bGetBlog ? 'spinner' : ''}">
+					<response-message class="responseMessageCustomElement" view-model.ref="msgGetBlog"></response-message>
+					<h1 class="blogTitle">
+						${main.txt_title}
+					</h1>
+					<h3 class="blogPublish">
+						Published on ${main.ts_publish_date | formatDate:'MM/DD/YYYY'}
+					</h3>
+					<div class="blogBody" ref="blogBodyDivRef">
+
+					</div>
+				</div>
+
+				<div class="pageSection ${bGetComments ? 'spinner' : ''}">
+					<div class="pageSectionTitle">
+						Comments
+					</div>
+					<div class="pageSectionBody">
+						<div class="blogCommentContainer" repeat.for="c of comments">
+							<div class="blogCommentHead">
+								<div class="blogCommentName">${c.txt_username} ${c.b_anonymous ? ' (anonymous)' : ''}</div>
+								<div class="blogCommentDate">
+									${c.ts_posted | formatDate : 'M/D/YYYY HH:mm:SS'}
+								</div>
+							</div>
+							<div class="blogCommentBody">
+								<div class="blogCommentText">${c.txt_body}</div>
+							</div>
+						</div>
+						<response-message class="responseMessageCustomElement" view-model.ref="msgGetComments"></response-message>	
+					</div>
+				</div>
+				
+
+				<div class="pageSection ${bSaveComment ? 'spinner' : ''}">
+					<div class="pageSectionTitle">
+						Submit Comment
+					</div>
+					<div class="pageSectionBody">
+						<div class="submitCommentContainer">
+							<div class="formElement100">
+								<div class="formElementLabel">
+									Username
+								</div>
+								<div class="formElementValue">
+									<input disabled.bind="userdata.bLoggedIn" class="formElementInput50" type="textbox" value.bind="clientComment.commentUsername"/>
+								</div>
+							</div>
+							<div class="formElement100">
+								<div class="formElementLabel">
+									Comment
+								</div>
+								<div class="formElementValue">
+									<textarea class="formElementTextarea100" value.bind="clientComment.commentBody"></textarea>
+								</div>
+							</div>
+							<div class="formElement100">
+								<input class="formElementButtonSubmit" type="button" value="Submit" click.delegate="saveComment()"/>
+							</div>
+							<response-message class="responseMessageCustomElement" view-model.ref="msgSaveComment"></response-message>
+						</div>
+						<div class="pageCommentPreviewContainer">
+							<div class="pageCommentPreviewTitle">
+								Comment Preview:
+							</div>
+							<div class="blogCommentContainer">
+								<div class="blogCommentHead">
+									<div class="blogCommentName">
+										${clientComment.commentUsername} ${!userdata.bLoggedIn ? ' (anonymous)' : ''} 
+									</div>
+								</div>
+								<div class="blogCommentBody">
+									<div class="blogCommentText">${clientComment.commentBody}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+</template>

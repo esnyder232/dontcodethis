@@ -1,0 +1,78 @@
+<template>
+	<div class="siteHeader" ref="siteHeaderRef">
+		<div class="navbarContainer" if.bind="!isMobile">
+			<div class="navbarLogo" click.delegate="router.navigateToRoute('home')">
+				DontCodeThis.com
+			</div>
+			<div class="navbar">
+				<div repeat.for="n of navbar" class="navbarItem">
+					<div class="hyperlink" click.delegate="navbarItemClicked(n)">
+						${n.txt_display_name}
+					</div>
+				</div>
+			</div>
+			<div class="navbarProfile">
+				<div class="profileItem">
+					<div class="hyperlink" if.bind="userdata.bLoggedIn" click.delegate="logout()">
+						Logout
+					</div>
+				</div>
+				<div class="profileItem" style="padding: 0px 0px 0px 0px">
+					<div class="hyperlink" if.bind="!userdata.bLoggedIn" click.delegate="router.navigateToRoute('user-login')">
+						Login
+					</div>
+				</div>
+				<div class="profileItem">
+					<div if.bind="userdata.bLoggedIn">
+						Logged in as "${userdata.username}"
+					</div>
+				</div>
+				
+				
+				<!-- <div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-forgot-username')">Forgot Username</div>
+				<div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-forgot-password')">Forgot Password</div>
+				<div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-create')">Create User</div> -->
+			</div>
+		</div>
+		<div class="navbarContainerMobile" if.bind="isMobile">
+			<div class="hamburgerMenuIcon" click.delegate="toggleHamburgerMenu()">
+				<svg class="svgIcon">
+					<use href="./images/svg-icons.svg#hamburger-menu-2"/>
+				</svg>
+			</div>
+			<div class="navbarProfile">
+				<div class="profileItem">
+					<div class="hyperlink" if.bind="userdata.bLoggedIn" click.delegate="logout()">
+						Logout
+					</div>
+				</div>
+				<div class="profileItem" style="padding: 0px 0px 0px 0px">
+					<div class="hyperlink" if.bind="!userdata.bLoggedIn" click.delegate="router.navigateToRoute('user-login')">
+						Login
+					</div>
+				</div>
+				<div class="profileItem">
+					<div if.bind="userdata.bLoggedIn">
+						Logged in as "${userdata.username}"
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="hamburgerMenuContainer" ref="hamburgerMenuContainerRef" show.bind="isMobile && showHamburgerMenu">
+		<div class="hamburgerMenuBackground" click.delegate="closeHamburgerMenu()">
+			<div class="hamburgerMenu">
+				<div class="hamburgerMenuNavbarItem" repeat.for="n of navbar" click.delegate="navbarItemClickedMobile(n)">
+					<div class="hyperlink" style="float:left;">
+						${n.txt_display_name}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="appRouterView">
+		<router-view ></router-view>
+    </div>
+</template>

@@ -1,0 +1,33 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				Create User Account
+				<div>
+					<span>Eamil: (used for confirmation)</span>
+					<input type="text" value.bind="email"/>
+				</div>
+				<div>
+					<span>Username:</span>
+					<input type="text" value.bind="username"/>
+				</div>
+				<div>
+					<span>Password:</span>
+					<input type="text" value.bind="password"/>
+				</div>
+				<div>
+					<span>Repeat Password:</span>
+					<input type="text" value.bind="passwordRepeat"/>
+				</div>
+				<div>
+					<input type="button" value="Create" click.delegate="createUser()" disabled.bind="isSaving"/>
+				</div>
+				<div>
+					${registerMessage}
+				</div>			</div>
+		</div>
+	</div>
+</template>
