@@ -463,6 +463,18 @@ h3.blogPublish {
 	font-style: italic;
 }
 
+.blogListShortSummary {
+	float:left;
+	width:100%;
+	padding-top: 4px;
+}
+
+.homeSubheader {
+	font-weight: bold;
+	padding-bottom:16px;
+	float:left;
+	width:100%;
+}
 
 @media only screen and (max-width: 600px) {
 	.pageContent {
