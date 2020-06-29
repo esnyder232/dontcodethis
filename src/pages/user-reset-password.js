@@ -6,9 +6,8 @@ export class UserResetPassword {
 	controllerName = "UserResetPassword";
 
 	username = "";
-	password = "hello123!@#";
-	passwordRepeat = "hello123!@#";
-	resetMessage = "Verifying link...";
+	password = "";
+	passwordRepeat = "";
 	bVerified = false;
 	isSaving = false;
 
@@ -30,28 +29,32 @@ export class UserResetPassword {
 		}
 
 		this.isSaving = true;
+		this.msgPageGeneral.messageSuccess("Verifying link...");
+
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/verifyResetPasswordToken", method: "POST", data: data})
 		.done((responseData, textStatus, xhr) => {
 			this.bVerified = true;
 			this.username = responseData.data.username;
+			this.msgPageGeneral.clear();
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageGeneral.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.resetMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
 	}
 
 	resetPassword()
 	{
+		this.msgPageGeneral.clear();
 		if(this.password !== this.passwordRepeat)
 		{
-			this.resetMessage = "Passwords do not match.";
+			this.msgPageGeneral.messageError("Passwords do not match.");
 			return;
 		}
 
@@ -62,18 +65,19 @@ export class UserResetPassword {
 		}
 
 		this.isSaving = true;
+
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/resetPassword", method: "POST", data: data})
 		.done((responseData, textStatus, xhr) => {
-			
+			this.msgPageGeneral.messageSuccess(responseData.userMessage);
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageGeneral.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.resetMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
 	}

@@ -64,7 +64,7 @@ class UserForgotPasswordController {
 				if(sqlData.length == 0)
 				{
 					bError = true;
-					userMessage = "That username was found.";
+					userMessage = "That username was not found.";
 				}				
 				if(!bError)
 				{

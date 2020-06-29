@@ -5,16 +5,18 @@
 	<div class="pageContainer">
 		<div class="pageBackground">
 			<div class="pageContent">
-				hello from user login
-				<div>
-					<span>Email:</span>
-					<input type="text" value.bind="email"/>
+				<div class="generalPageHeader">
+					Forgot Username
 				</div>
-				<div>
-					<input type="button" value="Submit" click.delegate="forgotUsername()" />
-				</div>
-				<div>
-					${forgotMessage}
+				<div class="generalPageBody ${isSaving ? 'spinner' : ''}">
+					<div class="simpleFormInputContainer">
+						<span>Email:</span>
+						<input class="simpleFormInput" type="text" value.bind="email"/>
+					</div>
+					<div class="simpleFormButtonContainer">
+						<input class="simpleFormButton" type="button" value="Submit" click.delegate="forgotUsername()" />
+					</div>
+					<response-message class="responseMessageCustomElement" view-model.ref="msgPageGeneral"></response-message>
 				</div>
 			</div>
 		</div>

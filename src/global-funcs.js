@@ -1,4 +1,5 @@
 export class GlobalFuncs {
+	appRouter = null;
 	constructor(){};
 
 	navToBlog(id, slug) {
@@ -40,15 +41,23 @@ export class GlobalFuncs {
 		{
 			result = arr[i];
 		}
-		
 
 		return result;
 	}
 
 
 	//called usually after a person logs in/out
-	refreshSite() {
-		window.location = "./";
+	refreshSite(route) {
+		if(route)
+		{
+			this.appRouter.navigateToRoute(route);
+		}
+		else
+		{
+			window.location = "./";
+		}
+		
+		location.reload();
 	}
 
 	//returns a copy of the userdata (so we don't bind everything to the globalfunc's userdata object)

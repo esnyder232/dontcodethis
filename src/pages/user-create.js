@@ -5,12 +5,10 @@ import {GlobalFuncs} from 'global-funcs';
 export class UserCreate {
 	controllerName = "UserCreate";
 
-	username = "esnyder";
-	email = " esnyder232@gmail.com";
-	password = "hello123!@#";
-	passwordRepeat = "hello123!@#";
-	registerMessage = "";
-
+	username = "";
+	email = "";
+	password = "";
+	passwordRepeat = "";
 	isSaving = false;
 
 	constructor(GlobalFuncs) {
@@ -19,9 +17,10 @@ export class UserCreate {
 
 	createUser()
 	{
+		this.msgPageGeneral.clear();
 		if(this.password !== this.passwordRepeat)
 		{
-			this.registerMessage = "Passwords do not match.";
+			this.msgPageGeneral.messageError("Passwords do not match.");
 			return;
 		}
 
@@ -32,18 +31,19 @@ export class UserCreate {
 		}
 
 		this.isSaving = true;
+
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/createUser", method: "POST", data: data})
 		.done((responseData, textStatus, xhr) => {
-			
+			this.msgPageGeneral.messageSuccess(responseData.userMessage);
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageGeneral.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.registerMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
 	}

@@ -3,16 +3,14 @@ import {GlobalFuncs} from 'global-funcs';
 
 @inject(GlobalFuncs)
 export class UserLogin {
-	username = "esnyder";
-	password = "hello123!@#";
+	username = "";
+	password = "";
 	controllerName = "UserLogin";
-	loginMessage = "";
-	apiMessage = "";
 	bRememberMe = "";
 
 	constructor(GlobalFuncs) {
 		this.globalfuncs = GlobalFuncs;
-
+		this.isSaving = false;
 		this.userdata = this.globalfuncs.userdata;
 	}
 
@@ -24,60 +22,34 @@ export class UserLogin {
 			bRememberMe: this.bRememberMe
 		}
 
+		this.msgPageGeneral.clear();
+		this.isSaving = true;
+
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/login", method: "POST", data: data})
 		.done((responseData, textStatus, xhr) => {
-			this.globalfuncs.refreshSite();
+			this.globalfuncs.refreshSite("home");
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageGeneral.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.loginMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
 	}
 
-
-
-
-	getPublicApi()
-	{
-		//send the api request
-		$.ajax({url: "./api/" + this.controllerName + "/publicApi", method: "GET"})
-		.done((responseData, textStatus, xhr) => {
-			this.apiMessage = JSON.stringify(responseData.data);
-		})
-		.fail((xhr) => {
-
-		})
-		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.loginMessage = responseData.userMessage;
-			this.isSaving = false;
-		});
+	gotoForgotUsername() {
+		this.globalfuncs.appRouter.navigateToRoute('user-forgot-username')
 	}
 
-	
-	getPrivateApi()
-	{
-		var data = {};
-		//send the api request
-		$.ajax({url: "./api/" + this.controllerName + "/secureApi", method: "GET", data: data})
-		.done((responseData, textStatus, xhr) => {
-			this.apiMessage = JSON.stringify(responseData.data);
-		})
-		.fail((xhr) => {
+	gotoForgotPassword() {
+		this.globalfuncs.appRouter.navigateToRoute('user-forgot-password')
+	}
 
-		})
-		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.loginMessage = responseData.userMessage;
-			this.isSaving = false;
-		});
+	gotoCreateUser() {
+		this.globalfuncs.appRouter.navigateToRoute('user-create')
 	}
 }

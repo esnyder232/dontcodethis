@@ -16,9 +16,6 @@ export class ResponseMessageCustomElement {
 		}
 		this.message = msg;
 		this.messageClass = "messageSuccess";
-		// window.setTimeout(() => {
-		// 	this.clear();
-		// }, 5000)
 	}
 
 	messageError(msg) {

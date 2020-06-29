@@ -206,7 +206,7 @@ class UserResetPasswordController {
 			{
 				var emailText = `<div>Hello #username#,</div>
 				<div></div>
-				<div>This is a notification generated to let you know your password was changed for your username on DontCodethis.com.</div>`;
+				<div>This is a notification generated to let you know your password for username "#username#" was changed for DontCodethis.com.</div>`;
 
 				emailText = emailText.replace(/#username#/g, username);
 

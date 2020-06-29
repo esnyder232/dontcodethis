@@ -5,29 +5,33 @@
 	<div class="pageContainer">
 		<div class="pageBackground">
 			<div class="pageContent">
-				Create User Account
-				<div>
-					<span>Eamil: (used for confirmation)</span>
-					<input type="text" value.bind="email"/>
+				<div class="generalPageHeader">
+					Create User Account
 				</div>
-				<div>
-					<span>Username:</span>
-					<input type="text" value.bind="username"/>
+				<div class="generalPageBody ${isSaving ? 'spinner' : ''}">
+					<div class="simpleFormInputContainer">
+						<span>Email:</span>
+						<input class="simpleFormInput" type="text" value.bind="email"/>
+						<span>(used for confirmation)</span>
+					</div>
+					<div class="simpleFormInputContainer">
+						<span>Username:</span>
+						<input class="simpleFormInput" type="text" value.bind="username"/>
+					</div>
+					<div class="simpleFormInputContainer">
+						<span>Password:</span>
+						<input class="simpleFormInput" type="password" value.bind="password"/>
+					</div>
+					<div class="simpleFormInputContainer">
+						<span>Repeat Password:</span>
+						<input class="simpleFormInput" type="password" value.bind="passwordRepeat"/>
+					</div>
+					<div class="simpleFormButtonContainer">
+						<input class="simpleFormButton" type="button" value="Create" click.delegate="createUser()" disabled.bind="isSaving"/>
+					</div>
+					<response-message class="responseMessageCustomElement" view-model.ref="msgPageGeneral"></response-message>
 				</div>
-				<div>
-					<span>Password:</span>
-					<input type="text" value.bind="password"/>
-				</div>
-				<div>
-					<span>Repeat Password:</span>
-					<input type="text" value.bind="passwordRepeat"/>
-				</div>
-				<div>
-					<input type="button" value="Create" click.delegate="createUser()" disabled.bind="isSaving"/>
-				</div>
-				<div>
-					${registerMessage}
-				</div>			</div>
+			</div>
 		</div>
 	</div>
 </template>

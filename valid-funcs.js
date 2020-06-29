@@ -33,7 +33,9 @@ class ValidFuncs {
 		regex = /(.@.)/g;
 		if(!bError)
 		{
-			if(email.match(regex).length != 1)
+			var matches = email.match(regex);
+
+			if(!matches || matches.length != 1)
 			{
 				bError = true;
 			}

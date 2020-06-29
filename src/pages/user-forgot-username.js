@@ -3,7 +3,7 @@ import {GlobalFuncs} from 'global-funcs';
 
 @inject(GlobalFuncs)
 export class UserForgotUsername {
-	email = "esnyder232@gmail.com";
+	email = "";
 	controllerName = "UserForgotUsername";
 	forgotMessage = "";
 
@@ -17,18 +17,22 @@ export class UserForgotUsername {
 			email: this.email
 		}
 
+		this.isSaving = true;
+
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/forgotUsername", method: "POST", data: data})
 		.done((responseData, textStatus, xhr) => {
-			
+			this.msgPageGeneral.messageSuccess(responseData.userMessage);
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageGeneral.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.forgotMessage = responseData.userMessage;
+			console.log('response data:')
+			console.log(responseData);
 			this.isSaving = false;
 		});
 	}

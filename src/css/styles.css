@@ -110,7 +110,7 @@ html {
 	height:100%;
 }
 
-input[type='textbox'], input[type='button'], textarea, select {
+input[type='text'], input[type='button'], input[type='password'], textarea, select {
 	background-color:#121415;
 	border-color:#575757;
 	color:#e8e6e3;
@@ -474,6 +474,23 @@ h3.blogPublish {
 	padding-bottom:16px;
 	float:left;
 	width:100%;
+}
+
+.simpleFormButtonContainer {
+	margin-top: 6px;
+}
+
+.simpleFormButton {
+	/* nothing yet...just setting it up */
+}
+
+
+.simpleFormInputContainer {
+	margin-bottom:6px;
+}
+
+.simpleFormInput {
+	/* nothing yet...just setting it up */
 }
 
 @media only screen and (max-width: 600px) {

@@ -5,39 +5,33 @@
 	<div class="pageContainer">
 		<div class="pageBackground">
 			<div class="pageContent">
-				hello from user login
-				<div if.bind="!userdata.bLoggedIn">
-					<div>
-						<span>Username:</span>
-						<input id="test" type="text" value.bind="username"/>
-					</div>
-					<div>
-						<span>Password:</span>
-						<input type="text" value.bind="password"/>
-					</div>
-					<div>
-						<div>Remember me</div>
-						<input type="checkbox" checked.bind="bRememberMe"/>
-					</div>
-					<div>
-						<input type="button" value="Login" click.delegate="login()"/>
-					</div>
+				<div class="generalPageHeader">
+					Login
 				</div>
-				<div if.bind="userdata.bLoggedIn">
-					<div>
-						<input type="button" value="Logout" click.delegate="logout()"/>
+				<div class="generalPageBody ${isSaving ? 'spinner' : ''}">
+					<div if.bind="!userdata.bLoggedIn">
+						<div class="simpleFormInputContainer">
+							<span>Username:</span>
+							<input class="simpleFormInput" type="text" value.bind="username"/>
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>Password:</span>
+							<input class="simpleFormInput" type="password" value.bind="password"/>
+						</div>
+						<div class="simpleFormInputContainer">
+							<input class="simpleFormInput" type="checkbox" checked.bind="bRememberMe"/>
+							<span>Remember me</span>
+						</div>
+						<div class="simpleFormButtonContainer">
+							<input class="simpleFormButton" type="button" value="Login" click.delegate="login()"/>
+							<div class="hyperlink" style="margin: 6px 0px;" click.delegate="gotoCreateUser()">Create User</div>
+							<div class="hyperlink" click.delegate="gotoForgotUsername()">Forgot username</div>
+							<div class="hyperlink" click.delegate="gotoForgotPassword()">Forgot password</div>
+						</div>
 					</div>
+					<response-message class="responseMessageCustomElement" view-model.ref="msgPageGeneral"></response-message>
 				</div>
-				<div>
-					${loginMessage}
-				</div>
-				<div style="border: 2px solid black">
-					<input type="button" value="Get Public Api" click.delegate="getPublicApi()" />
-					<input type="button" value="Get Private Api" click.delegate="getPrivateApi()" />
-					<div>
-						Api Message: ${apiMessage}
-					</div>
-				</div>			</div>
+			</div>
 		</div>
 	</div>
 </template>
