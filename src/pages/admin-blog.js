@@ -19,7 +19,6 @@ export class AdminBlog {
 		this.isAttached = false;
 
 		this.pageSize = 20;
-
 	}
 
 	activate(params) {
@@ -92,9 +91,7 @@ export class AdminBlog {
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET", data: data})
 		.done((responseData, textStatus, xhr) => {
-			var temp = this.globalfuncs.getDataObject(responseData.data.details, 0);
-			this.main = temp;
-			
+			this.main = this.globalfuncs.getDataObject(responseData.data.main, 0);
 			this.setTinyBody();
 		})
 		.fail((xhr) => {

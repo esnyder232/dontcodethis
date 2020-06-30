@@ -144,6 +144,7 @@ class UserCreateController {
 					from users 
 					where i_delete_flag is null 
 					and txt_username = $(txt_username)
+					and coalesce(txt_status, 'deactivated') <> 'deactivated'
 				);
 				
 				update users
@@ -154,7 +155,8 @@ class UserCreateController {
 				txt_email_token = $(txt_email_token),
 				ts_email_sent = current_timestamp,
 				txt_email = $(txt_email)
-				where txt_username = $(txt_username);
+				where txt_username = $(txt_username)
+				and txt_status = 'pending';
 				`
 
 				sqlParams = {

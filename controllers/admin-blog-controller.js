@@ -95,7 +95,7 @@ class AdminBlogController {
 		var data = {};
 		var userdata = {};
 		var uid = "";
-		var details = {};
+		var main = {};
 
 		try {
 			userdata = req.userdata;
@@ -153,7 +153,7 @@ class AdminBlogController {
 						
 						if(sqlData.length > 0)
 						{
-							details = sqlData[0];
+							main = sqlData[0];
 						}
 						else
 						{
@@ -164,7 +164,7 @@ class AdminBlogController {
 				}
 				else
 				{
-					details = {
+					main = {
 						txt_body: ""
 					};
 				}
@@ -188,7 +188,7 @@ class AdminBlogController {
 		if(bError)		
 			statusResponse = 500;
 
-		data.details = details;
+		data.main = main;
 
 		res.status(statusResponse).json({userMessage: userMessage, data: data});
 	}

@@ -1,0 +1,57 @@
+<template>
+	<require from="/value-converters" /></require>
+	<require from="../components/response-message"></require>
+  
+	<div class="pageContainer">
+		<div class="pageBackground">
+			<div class="pageContent">
+				<div class="generalPageHeader">
+					User Account
+				</div>
+				<div if.bind="userdata.bLoggedIn" class="generalPageBody ${isSaving ? 'spinner' : ''}">
+					<div class="simpleFormSection" change.trigger="detailsChanged()">
+						<div class="simpleFormSectionHeader">
+							Account Information
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>Account Username:</span>
+							<span>${main.txt_username}</span>
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>Account Email:</span>
+							<input class="simpleFormInput" type="text" value.bind="main.txt_email"/>
+						</div>
+					</div>
+					
+					<div class="simpleFormSection" change.trigger="detailsChanged()">
+						<div class="simpleFormSectionHeader">
+							Change Password
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>New Password:</span>
+							<input class="simpleFormInput" type="password" value.bind="main.password"/>
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>Repeat Password:</span>
+							<input class="simpleFormInput" type="password" value.bind="main.passwordRepeat"/>
+						</div>
+					</div>
+					<div class="simpleFormSection">
+						<div class="simpleFormSectionHeader">
+							Delete Account
+						</div>
+						<div class="simpleFormInputContainer">
+							<span>To delete your account, type your username here and click "Delete Account"</span>
+							<input class="simpleFormInput" type="text" value.bind="main.usernameVerification" />
+						</div>
+						<input if.bind="main.txt_username == main.usernameVerification" class="simpleFormButton redButton" type="button" value="Delete Account" click.delegate="deleteDetails()" disabled.bind="isSaving"/>
+					</div>
+					<div class="simpleFormButtonContainer">
+						<input class="simpleFormButton" type="button" value="Save Changes" click.delegate="saveDetails()" disabled.bind="isSaving || !isDirty"/>
+					</div>
+				</div>
+				<response-message class="responseMessageCustomElement" view-model.ref="msgPageGeneral"></response-message>
+			</div>
+		</div>
+	</div>
+</template>

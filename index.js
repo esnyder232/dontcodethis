@@ -18,7 +18,7 @@ const {AppController} = require("./controllers/app-controller.js");
 const {AdminBlogController} = require("./controllers/admin-blog-controller.js");
 const {BlogListController} = require("./controllers/blog-list-controller.js");
 const {BlogDetailsController} = require("./controllers/blog-details-controller.js");
-
+const {UserAccountController} = require("./controllers/user-account-controller.js");
 
 //middlware to get the user data from the database based on the session cookie
 var MW_GetUserData = async function (req, res, next) {
@@ -114,6 +114,10 @@ app.post('/api/UserLogin/login', MW_GetUserData, UserLoginController.login);
 
 app.get('/api/UserLogin/publicApi', MW_GetUserData, UserLoginController.publicApi);
 app.get('/api/UserLogin/secureApi', MW_GetUserData, UserLoginController.secureApi);
+
+app.get('/api/UserAccount/getDetails', MW_GetUserData, UserAccountController.getDetails);
+app.post('/api/UserAccount/saveDetails', MW_GetUserData, UserAccountController.saveDetails);
+
 
 app.post('/api/UserForgotUsername/forgotUsername', MW_GetUserData, UserForgotUsernameController.forgotUsername);
 app.post('/api/UserForgotPassword/forgotPassword', MW_GetUserData, UserForgotPasswordController.forgotPassword);

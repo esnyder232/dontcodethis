@@ -116,6 +116,12 @@ input[type='text'], input[type='button'], input[type='password'], textarea, sele
 	color:#e8e6e3;
 }
 
+input[type='button']:disabled {
+	background-color:#575757;
+	border-color:#575757;
+	color:#121415;
+}
+
 .hyperlink {
 	text-decoration: underline;
 	color:rgb(51, 125, 255);
@@ -415,8 +421,8 @@ h3.blogPublish {
 }
 
 .messageSuccess {
-	background-color:lightcyan;
-	border: 3px solid lightblue;
+	background-color:#004646;
+	border: 3px solid #1F5567;
 }
 
 .hide {
@@ -480,18 +486,37 @@ h3.blogPublish {
 	margin-top: 6px;
 }
 
-.simpleFormButton {
-	/* nothing yet...just setting it up */
-}
+/* nothing yet...just setting it up */
+/* .simpleFormButton {
+	
+} */
 
 
 .simpleFormInputContainer {
 	margin-bottom:6px;
 }
 
-.simpleFormInput {
-	/* nothing yet...just setting it up */
+/* nothing yet...just setting it up */
+/* .simpleFormInput {
+	
+} */
+
+.simpleFormSection {
+	margin-bottom:32px;
 }
+
+.simpleFormSectionHeader {
+	margin-bottom:12px;
+	font-weight: bold;
+	font-size:22px;
+}
+
+input.redButton {
+	color:white;
+	background-color: darkred;
+}
+
+
 
 @media only screen and (max-width: 600px) {
 	.pageContent {

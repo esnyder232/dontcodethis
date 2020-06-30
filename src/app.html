@@ -24,14 +24,9 @@
 				</div>
 				<div class="profileItem">
 					<div if.bind="userdata.bLoggedIn">
-						Logged in as "${userdata.username}"
+						Logged in as "<span class="hyperlink" click.delegate="router.navigateToRoute('user-account')">${userdata.username}</span>"
 					</div>
 				</div>
-				
-				
-				<!-- <div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-forgot-username')">Forgot Username</div>
-				<div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-forgot-password')">Forgot Password</div>
-				<div if.bind="!userdata.bLoggedIn" class="hyperlink" click.delegate="router.navigateToRoute('user-create')">Create User</div> -->
 			</div>
 		</div>
 		<div class="navbarContainerMobile" if.bind="isMobile">
