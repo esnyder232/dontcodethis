@@ -110,4 +110,11 @@ export class UserAccount {
 		this.msgPageGeneral.messageSuccess('Changes detected. Click "Save Changes" to apply.')
 	}
 
+	checkForEnter(e) {
+		if (e.keyCode == 13) {//enter key
+			this.saveDetails();
+			return false;
+		}
+		return true;
+	}
 }

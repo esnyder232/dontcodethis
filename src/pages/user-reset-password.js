@@ -81,4 +81,12 @@ export class UserResetPassword {
 			this.isSaving = false;
 		});
 	}
+
+	checkForEnter(e) {
+		if (e.keyCode == 13) {//enter key
+			this.resetPassword();
+			return false;
+		}
+		return true;
+	}
 }

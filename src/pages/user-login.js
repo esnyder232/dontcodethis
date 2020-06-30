@@ -41,6 +41,14 @@ export class UserLogin {
 		});
 	}
 
+	checkForEnter(e) {
+		if (e.keyCode == 13) {//enter key
+			this.login();
+			return false;
+		}
+		return true;
+	}
+
 	gotoForgotUsername() {
 		this.globalfuncs.appRouter.navigateToRoute('user-forgot-username')
 	}

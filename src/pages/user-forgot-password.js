@@ -34,4 +34,12 @@ export class UserForgotPassword {
 			this.isSaving = false;
 		});
 	}
+	
+	checkForEnter(e) {
+		if (e.keyCode == 13) {//enter key
+			this.forgotPassword();
+			return false;
+		}
+		return true;
+	}
 }

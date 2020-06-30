@@ -96,7 +96,7 @@ export class App {
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/logout", method: "POST"})
 		.done((responseData, textStatus, xhr) => {
-			this.globalfuncs.refreshSite();
+			this.globalfuncs.refreshSite("user-login");
 		})
 		.fail((xhr) => {
 

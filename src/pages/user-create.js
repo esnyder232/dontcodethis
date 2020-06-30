@@ -47,4 +47,12 @@ export class UserCreate {
 			this.isSaving = false;
 		});
 	}
+
+	checkForEnter(e) {
+		if (e.keyCode == 13) {//enter key
+			this.createUser();
+			return false;
+		}
+		return true;
+	}
 }

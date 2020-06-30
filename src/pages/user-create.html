@@ -11,20 +11,20 @@
 				<div class="generalPageBody ${isSaving ? 'spinner' : ''}">
 					<div class="simpleFormInputContainer">
 						<span>Email:</span>
-						<input class="simpleFormInput" type="text" value.bind="email"/>
+						<input class="simpleFormInput" type="text" value.bind="email" keyup.delegate="checkForEnter($event)"/>
 						<span>(used for confirmation)</span>
 					</div>
 					<div class="simpleFormInputContainer">
 						<span>Username:</span>
-						<input class="simpleFormInput" type="text" value.bind="username"/>
+						<input class="simpleFormInput" type="text" value.bind="username" keyup.delegate="checkForEnter($event)"/>
 					</div>
 					<div class="simpleFormInputContainer">
 						<span>Password:</span>
-						<input class="simpleFormInput" type="password" value.bind="password"/>
+						<input class="simpleFormInput" type="password" value.bind="password" keyup.delegate="checkForEnter($event)"/>
 					</div>
 					<div class="simpleFormInputContainer">
 						<span>Repeat Password:</span>
-						<input class="simpleFormInput" type="password" value.bind="passwordRepeat"/>
+						<input class="simpleFormInput" type="password" value.bind="passwordRepeat" keyup.delegate="checkForEnter($event)"/>
 					</div>
 					<div class="simpleFormButtonContainer">
 						<input class="simpleFormButton" type="button" value="Create" click.delegate="createUser()" disabled.bind="isSaving"/>

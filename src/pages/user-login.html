@@ -12,14 +12,14 @@
 					<div if.bind="!userdata.bLoggedIn">
 						<div class="simpleFormInputContainer">
 							<span>Username:</span>
-							<input class="simpleFormInput" type="text" value.bind="username"/>
+							<input class="simpleFormInput" type="text" value.bind="username" keyup.delegate="checkForEnter($event)"/>
 						</div>
 						<div class="simpleFormInputContainer">
 							<span>Password:</span>
-							<input class="simpleFormInput" type="password" value.bind="password"/>
+							<input class="simpleFormInput" type="password" value.bind="password" keyup.delegate="checkForEnter($event)"/>
 						</div>
 						<div class="simpleFormInputContainer">
-							<input class="simpleFormInput" type="checkbox" checked.bind="bRememberMe"/>
+							<input class="simpleFormInput" type="checkbox" checked.bind="bRememberMe" keyup.delegate="checkForEnter($event)"/>
 							<span>Remember me</span>
 						</div>
 						<div class="simpleFormButtonContainer">

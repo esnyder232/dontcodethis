@@ -19,7 +19,7 @@
 						</div>
 						<div class="simpleFormInputContainer">
 							<span>Account Email:</span>
-							<input class="simpleFormInput" autocomplete="off" type="text" value.bind="main.txt_email"/>
+							<input class="simpleFormInput" autocomplete="off" type="text" value.bind="main.txt_email" keyup.delegate="checkForEnter($event)"/>
 						</div>
 					</div>
 					
@@ -29,11 +29,11 @@
 						</div>
 						<div class="simpleFormInputContainer">
 							<span>New Password:</span>
-							<input class="simpleFormInput" autocomplete="new-password" type="password" value.bind="main.password"/>
+							<input class="simpleFormInput" autocomplete="new-password" type="password" value.bind="main.password" keyup.delegate="checkForEnter($event)"/>
 						</div>
 						<div class="simpleFormInputContainer">
 							<span>Repeat Password:</span>
-							<input class="simpleFormInput" autocomplete="new-password" type="password" value.bind="main.passwordRepeat"/>
+							<input class="simpleFormInput" autocomplete="new-password" type="password" value.bind="main.passwordRepeat" keyup.delegate="checkForEnter($event)"/>
 						</div>
 					</div>
 					<div class="simpleFormSection">
