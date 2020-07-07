@@ -8,7 +8,7 @@ html {
 	background-color: #181a1b;
 	color: #e8e6e3;
 	font-family: 'Lucida Sans';
-	font-size: 16px;
+	font-size: 20px;
 	margin:0px;
 	height:100%;
 }
@@ -476,10 +476,11 @@ h3.blogPublish {
 }
 
 .homeSubheader {
-	font-weight: bold;
 	padding-bottom:16px;
 	float:left;
 	width:100%;
+	font-size: 22px;
+	text-decoration: underline;
 }
 
 .simpleFormButtonContainer {
