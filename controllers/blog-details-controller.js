@@ -48,7 +48,11 @@ class BlogDetailsController {
 			if(!bError)
 			{
 				sqlStr = `
-				select uid, txt_title, txt_body, ts_publish_date
+				update blog
+				set i_hit_count = coalesce(i_hit_count, 0) + 1
+				where uid = $(uid);
+
+				select uid, txt_title, txt_body, ts_publish_date, coalesce(i_hit_count, 0) as i_hit_count
 				from blog
 				where i_delete_flag is null
 				and b_publish = true
@@ -62,9 +66,9 @@ class BlogDetailsController {
 
 				sqlData = await sco.multi(sqlStr, sqlParams);
 				
-				if(sqlData.length > 0)
+				if(sqlData.length == 2)
 				{
-					main = sqlData[0];
+					main = sqlData[1];
 				}
 				else
 				{

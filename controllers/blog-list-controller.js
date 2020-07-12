@@ -28,7 +28,7 @@ class BlogListController {
 			if(!bError)
 			{
 				sqlStr = `
-				select uid, txt_title, txt_url_slug, ts_publish_date
+				select uid, txt_title, txt_url_slug, ts_publish_date, coalesce(i_hit_count, 0) as i_hit_count
 				from blog
 				where i_delete_flag is null
 				and b_publish = true

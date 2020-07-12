@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1594575452__2020-07-12_13-37-32","dtCreated":"2020-07-12_13-37-32","dtCreated_X":"1594575452","migrations":[{"ts_log_time":"2020-07-12T17:15:17.920Z","txt_message":"alter table blog\r\nadd i_hit_count int\r\n"}]}
