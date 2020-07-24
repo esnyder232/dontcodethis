@@ -16,18 +16,8 @@ class GenFuncs {
 		var sqlStr = "";
 		var sqlParams = {};
 		
-		var mta = nodemailer.createTransport({
-			host: cfg.email_host,
-			port: cfg.email_port,
-			secure: cfg.email_isSecure,
-			auth: {
-				type: "OAuth2",
-				user: cfg.email_user,
-				clientId: cfg.email_clientId,
-				clientSecret: cfg.email_clientSecret,
-				refreshToken: cfg.email_refreshToken
-			}
-		});
+		//screw you google. Your oauth2 process sucks.
+		var mta = nodemailer.createTransport("smtps://" + cfg.email_user + ":" + cfg.email_pass + "@smtp.gmail.com");
 
 		var info = await mta.sendMail(mailOptions);
 
