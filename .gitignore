@@ -43,3 +43,4 @@ config_dct.json
 
 # Log Files
 /node_scripts/logs/*
+debug.log
