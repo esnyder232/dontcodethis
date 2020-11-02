@@ -36,7 +36,7 @@ export class StockheimerEventTool {
 				this.mytiny = editor;
 			});
 
-			// this.getList();
+			this.getList();
 			// this.getDetails();
 		}
 	}
@@ -51,7 +51,7 @@ export class StockheimerEventTool {
 			this.mytiny = editor;
 		});
 
-		// this.getList();
+		this.getList();
 		// this.getDetails();
 	}
 

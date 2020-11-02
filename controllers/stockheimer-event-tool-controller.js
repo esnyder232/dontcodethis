@@ -24,29 +24,27 @@ class StockheimerEventToolController {
 			userdata = req.userdata;
 			sco = await db.connect();
 			
-			//check if they are already logged in
-			if(!bError && !userdata.bLoggedIn)
-			{
-				bError = true;
-				userMessage = "You are not logged in.";
-			}
-
-			//check if they are admin
-			if(!bError && !userdata.bAdmin)
-			{
-				bError = true;
-				userMessage = "You are not admin.";
-			}
-
-			//get aurelia app routes and nav bar so the site will load
+			//get list
 			if(!bError)
 			{
 				sqlStr = `
-				select uid, txt_title, txt_url_slug, b_publish, ts_publish_date
-				from blog
-				where i_delete_flag is null
-				order by uid desc
+				select sch.uid, sch.txt_schema_name, sch.b_public, u.txt_username, sch.i_user
+				from stockheimer_event_schema sch
+				left join users u on sch.i_user = u.uid and u.i_delete_flag is null
+				where sch.i_delete_flag is null
+				and (
+					$(b_admin) = true --admin can see everything
+					OR
+					sch.i_user = $(userId) --owner can see only theirs
+					OR
+					coalesce(sch.b_public, false) = true --anyone can see public
+				)
 				`;
+
+				sqlParams = {
+					b_admin: userdata.bAdmin,
+					userId: userdata.uid
+				};
 	
 				sqlData = await sco.multi(sqlStr, sqlParams);
 
