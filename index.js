@@ -19,6 +19,7 @@ const {AdminBlogController} = require("./controllers/admin-blog-controller.js");
 const {BlogListController} = require("./controllers/blog-list-controller.js");
 const {BlogDetailsController} = require("./controllers/blog-details-controller.js");
 const {UserAccountController} = require("./controllers/user-account-controller.js");
+const {StockheimerEventToolController} = require("./controllers/stockheimer-event-tool-controller.js");
 
 //middlware to get the user data from the database based on the session cookie
 var MW_GetUserData = async function (req, res, next) {
@@ -133,6 +134,9 @@ app.get('/api/BlogDetails/getDetails', MW_GetUserData, BlogDetailsController.get
 app.get('/api/BlogDetails/getComments', MW_GetUserData, BlogDetailsController.getComments);
 app.post('/api/BlogDetails/saveComment', MW_GetUserData, BlogDetailsController.saveComment);
 
+app.get('/api/StockheimerEventTool/getList', MW_GetUserData, StockheimerEventToolController.getList);
+app.get('/api/StockheimerEventTool/getDetails', MW_GetUserData, StockheimerEventToolController.getDetails);
+app.post('/api/StockheimerEventTool/saveDetails', MW_GetUserData, StockheimerEventToolController.saveDetails);
 
 
 //run the server
