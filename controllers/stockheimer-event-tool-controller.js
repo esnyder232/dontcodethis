@@ -28,7 +28,7 @@ class StockheimerEventToolController {
 			if(!bError)
 			{
 				sqlStr = `
-				select sch.uid, sch.txt_schema_name, sch.b_public, u.txt_username, sch.i_user
+				select sch.uid, sch.txt_schema_name, sch.b_public, coalesce(u.txt_username, 'none') txt_username
 				from stockheimer_event_schema sch
 				left join users u on sch.i_user = u.uid and u.i_delete_flag is null
 				where sch.i_delete_flag is null
@@ -92,6 +92,8 @@ class StockheimerEventToolController {
 		var userdata = {};
 		var uid = "";
 		var main = {};
+		var details = [];
+		var parameters = []
 
 		try {
 			userdata = req.userdata;
@@ -99,71 +101,136 @@ class StockheimerEventToolController {
 
 			uid = req.query.uid;
 			
-			//check if they are already logged in
-			if(!bError && !userdata.bLoggedIn)
-			{
-				bError = true;
-				userMessage = "You are not logged in.";
-			}
-
-			//check if they are admin
-			if(!bError && !userdata.bAdmin)
-			{
-				bError = true;
-				userMessage = "You are not admin.";
-			}
-
-			//see if this is for getting a new record
-			if(!bError)
+			//retrieve an existing record
+			if(uid) 
 			{
 				//validate inputs
-				if(uid)
+				userMessage = ValidFuncs.validateInt(uid);
+				bError = userMessage != "success";
+				if(bError)
 				{
-					userMessage = ValidFuncs.validateInt(uid);
-					bError = userMessage != "success";
-					if(bError)
-					{
-						userMessage = "Uid is not an integer.";
-					}
-					else
-					{
-						uid = Number.parseInt(uid);
-					}
-
-					//get aurelia app routes and nav bar so the site will load
-					if(!bError)
-					{
-						sqlStr = `
-						select uid, txt_title, coalesce(txt_body, '') as txt_body, txt_url_slug, b_publish, ts_publish_date, ts_last_updated, txt_last_updated_user, ts_created
-						from blog
-						where i_delete_flag is null
-						and uid = $(uid)
-						`;
-			
-						sqlParams = {
-							uid: uid
-						};
-
-						sqlData = await sco.any(sqlStr, sqlParams);
-
-						
-						if(sqlData.length > 0)
-						{
-							main = sqlData[0];
-						}
-						else
-						{
-							bError = true;
-							userMessage = "Error when getting details.";
-						}
-					}
+					userMessage = "Invalid parameter: uid is not an integer.";
 				}
 				else
 				{
-					main = {
-						txt_body: ""
-					};
+					uid = Number.parseInt(uid);
 				}
+
+				//get aurelia app routes and nav bar so the site will load
+				if(!bError)
+				{
+					sqlStr = `
+					select sch.uid
+					, sch.txt_schema_name
+					, sch.txt_notes
+					, sch.b_public
+					, sch.ts_last_updated
+					, sch.ts_created
+					, coalesce(u.txt_username, 'none') txt_username
+					, 'U' as record_action
+					, ($(bAdmin) = true OR coalesce(sch.i_user, $(userId)) = $(userId)) as is_update_allowed
+					from stockheimer_event_schema sch
+					left join users u on sch.i_user = u.uid
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
+					
+					select se.uid
+					, se.txt_event_name
+					, se.txt_notes
+					, 'U' as record_action
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
+					
+					
+					select sed.uid
+					, sed.i_event_link_id
+					, sed.txt_notes
+					, sed.i_order
+					, sed.txt_param_name
+					, sed.txt_data_type
+					, 'U' as record_action
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					inner join stockheimer_event_details sed on sed.uid = sed.i_event_link_id and se.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
+					
+					
+					select sep.uid
+					, sep.i_schema_id
+					, sep.i_bit_length
+					, sep.txt_data_type
+					from stockheimer_event_schema sch
+					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
+					
+					`;
+
+					sqlParams = {
+						uid: uid,
+						bAdmin: userdata.bAdmin,
+						userId: userdata.uid ? userdata.uid : '0'
+					};
+
+					sqlData = await sco.multi(sqlStr, sqlParams);
+
+					if(sqlData.length > 0)
+					{
+						main = GenFuncs.getNullObjectFromArray(sqlData[0], 0);
+						var eventParent = GenFuncs.getNullArray(sqlData, 1);
+						var eventChildren = GenFuncs.getNullArray(sqlData, 2);
+						parameters = GenFuncs.getNullArray(sqlData, 3);
+
+						details = GenFuncs.joinTables(eventParent, eventChildren, 'uid', 'i_event_link_id', 'parameters');
+					}
+					else
+					{
+						bError = true;
+						userMessage = "Error occurred when getting details.";
+					}
+				}
+
+				
+			}
+			//new record
+			else 
+			{
+				main = {
+					is_update_allowed: true
+				};
+				details = [];
+				parameters = [];
 			}
 			
 		}
@@ -185,6 +252,8 @@ class StockheimerEventToolController {
 			statusResponse = 500;
 
 		data.main = main;
+		data.details = details;
+		data.parameters = parameters;
 
 		res.status(statusResponse).json({userMessage: userMessage, data: data});
 	}

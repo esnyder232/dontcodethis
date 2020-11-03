@@ -171,6 +171,46 @@ class GenFuncs {
 		return result;
 	}
 
+
+	//joins parent on child tables on pkeys = ckeys
+	joinTables(p, c, pkey, ckey, childName)
+	{
+		if(childName == undefined)
+			childName = 'children';
+
+		var json = JSON.parse(JSON.stringify(p));
+
+		//ugly...whatever
+		for(var i = 0; i < p.length; i++)
+		{
+			var childMatches = [];
+			childMatches = c.filter(x => {return p[i][pkey] == x[ckey];});
+			json[i][childName] = childMatches;
+		}
+
+		return json;
+	}
+	
+	getNullArray(array, index)
+	{
+		if(index < array.length)
+		{
+			return array[index];
+		}
+			
+		return [];
+	}
+
+	getNullObjectFromArray(arr, i) {
+		var result = {};
+
+		if(Array.isArray(arr) && arr.length > i)
+		{
+			result = arr[i];
+		}
+
+		return result;
+	}
 }
 
 exports.GenFuncs = new GenFuncs();

@@ -122,6 +122,25 @@ input[type='button']:disabled {
 	color:#121415;
 }
 
+
+input[type='text']:disabled {
+	background-color:#575757;
+	border-color:#575757;
+	color:#e8e6e3;
+}
+
+input[type='textarea']:disabled {
+	background-color:#575757;
+	border-color:#575757;
+	color:#e8e6e3;
+}
+
+input[type='select']:disabled {
+	background-color:#575757;
+	border-color:#575757;
+	color:#e8e6e3;
+}
+
 .hyperlink {
 	text-decoration: underline;
 	color:rgb(51, 125, 255);
@@ -153,15 +172,23 @@ input[type='button']:disabled {
 	content: "\f161";
 }
 
+.listHeader {
+	font-weight: bold;
+	font-size: 28px;
+	width:100%;
+	float:left;
+	margin-top: 16px;
+}
+
 
 .tbl-list {
-	border: 1px solid gray;
+	border: 1px solid rgb(120, 111, 98);
 	border-collapse: collapse;
 	width:100%;
 }
 
 .tbl-list th {
-	border: 1px solid #ddd;
+	border: 1px solid rgb(120, 111, 98);
 	padding: 8px;
 	font-weight: bold;
 	font-size: 16px;
@@ -169,20 +196,39 @@ input[type='button']:disabled {
 
 
 .tbl-list td {
-	border: 1px solid #ddd;
-	padding: 8px;
+	border: 1px solid rgb(120, 111, 98);
+	padding: 2px 8px 2px 8px;
 }
 
-.tbl-list tr:nth-child(even){background-color: #f2f2f2;}
+.tbl-list tr:nth-child(even){
+	background-color: #111315;
+}
 
-.tbl-list tr:hover {
-	background-color: #ddd;
+.tbl-list tbody tr:hover {
+	background-color: rgb(0, 42, 42);
 	cursor: pointer;
+}
+
+.listPaginationDiv {
+	float:left;
+	width:100%;
+	margin: 3px 0px 0px 0px;
+}
+
+.formHeader {
+	font-weight: bold;
+	font-size: 28px;
+	width: 100%;
+	float:left;
+	margin: 24px 0px 0px 0px;
 }
 
 .formBody {
 	width: 100%;
 	float:left;
+	border: 1px solid rgb(120, 111, 98);
+	background-color:rgb(38 38 38);
+	margin-bottom:14px;
 }
 
 .formLabel {
@@ -238,6 +284,17 @@ input[type='button']:disabled {
 	float:right;
 }
 
+.buttonControlDiv {
+	width: 95%;
+	float:right;
+	margin: 16px 8px 8px 8px;
+}
+
+.recordButtonRight {
+	float:right;
+	margin-left: 12px;
+	font-size: 20px;
+}
 
 .pageContainer {
 	width:100%;

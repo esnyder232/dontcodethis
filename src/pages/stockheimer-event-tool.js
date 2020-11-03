@@ -7,14 +7,14 @@ export class StockheimerEventTool {
 	constructor(GlobalFuncs) {
 		this.globalfuncs = GlobalFuncs;
 		this.controllerName = "StockheimerEventTool";
-		this.adminMessage = "";
 		
 		this.list = [];
-		this.details = [];
 		this.main = {};
+		this.details = [];
+		this.parameters = [];
+		this.isUpdateAllowed = true;		
 		this.action = "insert";
 
-		this.editor_id = '#tinyBody';
 		this.key = "";
 		this.isAttached = false;
 
@@ -23,44 +23,26 @@ export class StockheimerEventTool {
 
 	activate(params) {
 		this.params = params;
-		this.main = {};
-
 		this.key = this.params.id;
 
 		if(this.isAttached)
 		{
-			tinymce.init({
-				selector: '#tinyBody',
-				plugins: ['paste', 'link', 'image', 'table']
-			}).then((editor) => {
-				this.mytiny = editor;
-			});
-
 			this.getList();
-			// this.getDetails();
+			this.getDetails();
 		}
 	}
 	
 	attached() {
 		this.isAttached = true;
 
-		tinymce.init({
-			selector: '#tinyBody',
-			plugins: ['paste', 'link', 'image', 'table']
-		}).then((editor) => {
-			this.mytiny = editor;
-		});
-
 		this.getList();
-		// this.getDetails();
+		this.getDetails();
 	}
 
 	deactivate() {
-		tinymce.remove('#tinyBody');
 	}
 
 	detached() {
-		tinymce.remove('#tinyBody');
 	}
 
 	getList()
@@ -71,12 +53,10 @@ export class StockheimerEventTool {
 			this.list = this.globalfuncs.getDataArray(responseData.data.list);
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageList.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.adminMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
 	}
@@ -87,43 +67,53 @@ export class StockheimerEventTool {
 		var data = {
 			uid: this.key
 		};
+
+		console.log('getting details...')
+		this.main = {};
+		this.details = [];
+		this.parameters = [];
+		this.isUpdateAllowed = true;
 		
 		//send the api request
 		$.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET", data: data})
 		.done((responseData, textStatus, xhr) => {
-			this.main = this.globalfuncs.getDataObject(responseData.data.main, 0);
-			this.setTinyBody();
+			this.isDirty = false;
+			this.main = this.globalfuncs.getDataObject(responseData.data.main);
+			this.details = this.globalfuncs.getDataObject(responseData.data.details);
+			this.parameters = this.globalfuncs.getDataObject(responseData.data.parameters);
+
+			console.log('details came back successful');
+			console.log(this.main);
+			console.log(this.details);
+			console.log(this.parameters);
+
+			this.isUpdateAllowed = this.main.is_update_allowed;
+			console.log(this.isUpdateAllowed)
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageDetails.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.adminMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
+
+
 	}
 
 	listClicked(record) {
-		this.globalfuncs.appRouter.navigateToRoute("admin-blog", {id: record.uid});
+		this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: record.uid});
+		this.key = record.uid;
+		this.getDetails();
 	}
 
 	newRecord() {
-		if(this.key)
-		{
-			this.globalfuncs.appRouter.navigateToRoute("admin-blog", {id: ""});
-		}
-		else
-		{
-			this.getDetails();
-		}
-		
+		this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: ""});
+		this.key = "";
+		this.getDetails();
 	}
 
 	saveRecord() {
-		this.getTinyBody();
-
 		//calculate the action
 		if(this.main.uid)
 		{
@@ -139,26 +129,28 @@ export class StockheimerEventTool {
 			action: this.action
 		};
 
-		//send the api request
-		$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
+		$.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET"})
 		.done((responseData, textStatus, xhr) => {
 			this.key = responseData.data.key;
 			this.getList();
 			this.getDetails();
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageDetails.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.adminMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
+
+
 	}
 
 	deleteRecord() {
-		this.getTinyBody();
+		//warn the user
+		var answer = window.confirm("Are you sure you want to delete this record?");
 
 		this.action = "delete";
 
@@ -175,26 +167,13 @@ export class StockheimerEventTool {
 			this.getDetails();
 		})
 		.fail((xhr) => {
-
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageDetails.messageError(responseData.userMessage);
 		})
 		.always((a, textStatus, c) => {
 			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
 			var responseData = xhr.responseJSON;
-			this.adminMessage = responseData.userMessage;
 			this.isSaving = false;
 		});
-	}
-
-	setTinyBody() {
-		window.setTimeout(() => {
-			var temp = tinymce.get('tinyBody')
-			temp.setContent(this.main.txt_body);
-		}, 100)
-	}
-
-	getTinyBody(){
-		var temp = tinymce.get('tinyBody').getContent();
-		this.main.txt_body = temp;
-		this.previewDiv.innerHTML = temp;
 	}
 }

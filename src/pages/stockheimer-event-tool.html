@@ -5,58 +5,57 @@
 	<div class="pageContainer">
 		<div class="pageBackground">
 			<div class="pageContent">
-				<div>
-					Messages: ${adminMessage}
+				<div class="generalPageHeader">
+					Stockheimer Event Tool
 				</div>
-				<div>Blog list:</div>
+				<p>
+					This tool is for creating and exporting the websocket event schema for the Stockheimer game. I personally use it to help manage the data, and made it public in case other people want to play around with it.
+				</p>
+				<p>
+					To use this tool, enter in a "Schema Name", then scroll to the bottom and click save. This will create a schema entry for your user for the database. Only the owners can modify their own data. So if you see another schema made by another user, you might be able to view it, but only the owner can modify it. The "Public?" checkmark will allow other users to view your schema, but not modify it.
+					You can also view public schemas or your own by clicking a record in the "Schema Records" table.
+				</p>
+				<p>
+					To export with this tool, scroll to the bottom and hit export. When exporting, 2 json objects are created: event_parameters and event_schema.
+				</p>
+				<hr>
+				<div class="listHeader">Schema Records</div>
 				<table class="tbl-list" aurelia-table="data.bind: list; display-data.bind: $displayData; current-page.bind: currentPage; page-size.bind: pageSize; total-items.bind: totalItems;">
 					<thead>
 						<tr>
 							<th aut-sort="key: uid">Uid</th>
-							<th aut-sort="key: txt_title">Schema Name</th>
-							<th aut-sort="key: ">Created By User</th>
-							<th aut-sort="key: b_publish">Public?</th>
+							<th aut-sort="key: txt_schema_name">Schema Name</th>
+							<th aut-sort="key: txt_username">Created By User</th>
+							<th aut-sort="key: b_public">Public?</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr repeat.for="n of $displayData" click.delegate="listClicked(n)">
 							<td>${n.uid}</td>
-							<td>${n.txt_title}</td>
-							<td>${n.txt_url_slug}</td>
-							<td>${n.b_publish}</td>
-							<td>${n.ts_publish_date | formatDate: 'M/D/YYYY'}</td>
+							<td>${n.txt_schema_name}</td>
+							<td>${n.txt_username}</td>
+							<td>${n.b_public}</td>
 						</tr>
 					</tbody>
 				</table>
-				<div>
-					<div class="col-md-9">
+				<response-message class="responseMessageCustomElement" view-model.ref="msgPageList"></response-message>
+				<div class="listPaginationDiv">
+					<div>
 						<aut-pagination current-page.bind="currentPage" page-size.bind="pageSize" total-items.bind="totalItems" pagination-size.bind="5" boundary-links.bind="true"> </aut-pagination>
 					</div>
-			
-					<div class="col-md-3">
-						<div class="form-inline">
-							<div class="form-group pull-right">
-								<label for="pageSize">Page Size: </label>
-								<select value.bind="pageSize" id="pageSize" class="form-control">
-									<option model.bind="5">5</option>
-									<option model.bind="10">10</option>
-									<option model.bind="20">20</option>
-									<option model.bind="50">50</option>
-								</select>
-							</div>
-						</div>
+					
+					<div>
+						<label for="pageSize">Page Size: </label>
+						<select value.bind="pageSize" id="pageSize" class="form-control">
+							<option model.bind="5">5</option>
+							<option model.bind="10">10</option>
+							<option model.bind="20">20</option>
+							<option model.bind="50">50</option>
+						</select>
 					</div>
-			
 				</div>
-				<div>
-					<input style="float:left;" type="button" value="Refresh Preview" click.delegate="getTinyBody()">
-					<input style="float:right;" type="button" click.delegate="newRecord()" value="New" />
-					<input style="float:right;" type="button" click.delegate="saveRecord()" value="Save" />
-					<input style="float:right;" type="button" click.delegate="deleteRecord()" value="Delete" />
-				</div>
-			
-				<div class="formBody" style="border: 1px solid red;">
-					<div class="formLabel">This is the results of the record clicked:</div>
+				<div class="formHeader">Schema Record Details</div>			
+				<div class="formBody">
 					<div class="formRow">
 						<div class="formElement25">
 							<div class="formElementLabel">Uid</div>
@@ -113,18 +112,31 @@
 							</div>
 						</div>
 					</div>
+
+					<div class="buttonControlDiv">
+						<input class="recordButtonRight" type="button" click.delegate="saveRecord()" value="Save" disabled.bind="!isUpdateAllowed" />
+						<input class="recordButtonRight" type="button" click.delegate="deleteRecord()" value="Delete" disabled.bind="!isUpdateAllowed" />
+						<input class="recordButtonRight" type="button" click.delegate="newRecord()" value="New Record" />
+					</div>
+					
+					<response-message class="responseMessageCustomElement" view-model.ref="msgPageDetails"></response-message>
 				</div>
-			
-				<div>
-					Body:
+
+
+				<div class="formHeader">Schema Record Export</div>
+				<div class="formBody">
+					<div class="formRow">
+						<div class="formElement100">
+							<div class="formElementLabel">Export Result</div>
+							<div class="formElementValue">
+								<textarea class="formElementTextarea100" rows="4"></textarea>
+							</div>
+						</div>
+					<div class="buttonControlDiv">
+						<input class="recordButtonRight" type="button" click.delegate="exportRecord()" value="Export" />
+					</div>
 				</div>
-				<div id="tinyBody">
-			
-				</div>
-			
-				<div ref="previewDiv">
-			
-				</div>
+
 			</div>
 		</div>
 	</div>
