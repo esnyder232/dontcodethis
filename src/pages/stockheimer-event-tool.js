@@ -131,26 +131,30 @@ export class StockheimerEventTool {
 				this.action = "insert";
 			}
 
-			// var data = {
-			// 	main: JSON.stringify(this.main),
-			// 	action: this.action
-			// };
+			var data = {
+				main: JSON.stringify(this.main),
+				details: JSON.stringify(this.details),
+				parameters: JSON.stringify(this.parameters),
+				action: this.action
+			};
 
-			// $.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET"})
-			// .done((responseData, textStatus, xhr) => {
-			// 	this.key = responseData.data.key;
-			// 	this.getList();
-			// 	this.getDetails();
-			// })
-			// .fail((xhr) => {
-			// 	var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
-			// 	this.msgPageDetails.messageError(responseData.userMessage);
-			// })
-			// .always((a, textStatus, c) => {
-			// 	var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			// 	var responseData = xhr.responseJSON;
-			// 	this.isSaving = false;
-			// });
+			$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
+			.done((responseData, textStatus, xhr) => {
+				this.key = responseData.data.key;
+				this.msgPageDetails.messageSuccess(responseData.userMessage);
+
+				this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: this.key});
+
+				this.getList();
+				this.getDetails();
+			})
+			.fail((xhr) => {
+				var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+				this.msgPageDetails.messageError(responseData.userMessage);
+			})
+			.always((a, textStatus, c) => {
+				this.isSaving = false;
+			});
 
 		}
 	}
@@ -180,25 +184,31 @@ export class StockheimerEventTool {
 
 		var data = {
 			main: JSON.stringify(this.main),
+			details: JSON.stringify(this.details),
+			parameters: JSON.stringify(this.parameters),
 			action: this.action
 		};
 
 		//send the api request
-		// $.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
-		// .done((responseData, textStatus, xhr) => {
-		// 	this.key = "";
-		// 	this.getList();
-		// 	this.getDetails();
-		// })
-		// .fail((xhr) => {
-		// 	var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
-		// 	this.msgPageDetails.messageError(responseData.userMessage);
-		// })
-		// .always((a, textStatus, c) => {
-		// 	var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-		// 	var responseData = xhr.responseJSON;
-		// 	this.isSaving = false;
-		// });
+		$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
+		.done((responseData, textStatus, xhr) => {
+			this.key = "";
+			this.msgPageDetails.messageSuccess(responseData.userMessage);
+
+			this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: ""});
+			
+			this.getList();
+			this.getDetails();
+		})
+		.fail((xhr) => {
+			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			this.msgPageDetails.messageError(responseData.userMessage);
+		})
+		.always((a, textStatus, c) => {
+			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
+			var responseData = xhr.responseJSON;
+			this.isSaving = false;
+		});
 	}
 
 	addDetailsRow(parent, customJson) {
