@@ -141,6 +141,7 @@ input[type='select']:disabled {
 	color:#e8e6e3;
 }
 
+
 .hyperlink {
 	text-decoration: underline;
 	color:rgb(51, 125, 255);
@@ -223,17 +224,40 @@ input[type='select']:disabled {
 	margin: 24px 0px 0px 0px;
 }
 
-.formBody {
+.formSubHeader {
+	width:100%;
+	float:left;
+	font-size: 28px;
+	margin:9px 0px 0px 6px;
+}
+
+.formContainer {
 	width: 100%;
 	float:left;
 	border: 1px solid rgb(120, 111, 98);
-	background-color:rgb(38 38 38);
 	margin-bottom:14px;
 }
+
+.formBodyGray {
+	width:100%;
+	float:left;
+	background-color:rgb(38 38 38);
+}
+
+.formBodyDarkgray {
+	width:100%;
+	float:left;
+	background-color:rgb(18 18 18);
+}
+
 
 .formLabel {
 	width:100%;
 	float:left;
+}
+
+.valueRequired {
+	border: 1px solid red !important;
 }
 
 .formRow {
@@ -284,6 +308,7 @@ input[type='select']:disabled {
 	float:right;
 }
 
+
 .buttonControlDiv {
 	width: 95%;
 	float:right;
@@ -295,6 +320,144 @@ input[type='select']:disabled {
 	margin-left: 12px;
 	font-size: 20px;
 }
+
+.tblDetails {
+	border: 1px solid rgb(120, 111, 98);
+	border-collapse: collapse;
+	width:100%;
+}
+
+.tblDetails th {
+	border: 1px solid rgb(120, 111, 98);
+	padding: 8px 4px 8px 4px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.tblDetails td {
+	border: 1px solid rgb(120, 111, 98);
+	padding: 2px 1% 2px 1%;
+}
+
+
+
+.tblDetailsParent {
+	border: 1px solid rgb(120, 111, 98);
+	border-collapse: collapse;
+	width:100%;
+	border-spacing: 0px;
+}
+
+.tblDetailsParent>thead>tr>th {
+	border: 1px solid rgb(120, 111, 98);
+	padding: 8px 4px 8px 4px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+
+.tblDetailsParent>tbody>tr>td {
+	border-width: 3px;
+	border-color: rgb(120, 111, 98);
+	border-style: solid;
+	padding: 4px;
+}
+
+
+.detailsParentContainer {
+	width: 100%;
+	float: left;
+	margin-bottom: 12px;
+}
+
+.detailsParentLabelValueSection {
+	width: 80%;
+	float: left;
+}
+
+.detailsParentElement {
+	width: 100%;
+	float: left;
+}
+
+.detailsParentLabel {
+	float: left;
+	margin-right: 6px;
+}
+
+.detailsParentValue {
+	width: 83%;
+	float: left;
+}
+
+.detailsParentActionSection {
+	width: 20%;
+	float: left;
+	text-align: right;
+}
+
+.xDeleteImage {
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+}
+
+.detailsChildContainer {
+	width: 90%;
+	float: left;
+	padding: 0% 5% 0% 5%;
+	margin-bottom: 26px;
+}
+
+.tblDetailsChild {
+	border: 1px solid rgb(120, 111, 98);
+	border-collapse: collapse;
+	width:100%;
+}
+
+.tblDetailsChild th {
+	border: 1px solid rgb(120, 111, 98);
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.tblDetailsChild td {
+	border: 1px solid rgb(120, 111, 98);
+	padding: 2px 0.5% 2px 0.5%;
+}
+
+.detailElementInput100 {
+	width: 98%;
+}
+
+.detailElementInput50 {
+	width: 48%;
+}
+
+.detailsButtonControlDiv {
+	width: 100%;
+	float:left;
+}
+
+
+.rowDetailsDelete {
+	background-color: rgb(150, 0, 0);
+}
+
+.rowDetailsInsert {
+	background-color: rgb(0, 45, 0);
+}
+
+.detailsButtonRight {
+	float:right;
+	margin-left: 12px;
+}
+
+.detailsButtonLeft {
+	float:left;
+	margin-right: 12px;
+}
+
 
 .pageContainer {
 	width:100%;

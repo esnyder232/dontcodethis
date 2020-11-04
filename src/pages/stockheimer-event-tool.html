@@ -55,88 +55,224 @@
 					</div>
 				</div>
 				<div class="formHeader">Schema Record Details</div>			
-				<div class="formBody">
-					<div class="formRow">
-						<div class="formElement25">
-							<div class="formElementLabel">Uid</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" disabled type="text" value.bind="main.uid" />
+				<div class="formContainer">
+					<div class="formBodyGray">
+						<div class="formRow">
+							<div class="formSubHeader">
+								General
 							</div>
 						</div>
-						<div class="formElement25">
-							<div class="formElementLabel">Created</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" disabled type="text" value.bind="main.ts_created | formatDate: 'M/D/YYYY HH:mm:ss'" />
+						<div class="formRow">
+							<div class="formElement25">
+								<div class="formElementLabel">Uid</div>
+								<div class="formElementValue">
+									<input class="formElementInput100" disabled type="text" value.bind="main.uid" />
+								</div>
+							</div>
+							<div class="formElement25">
+								<div class="formElementLabel">Creation Date</div>
+								<div class="formElementValue">
+									<input class="formElementInput100" disabled type="text" value.bind="main.ts_created | formatDate: 'M/D/YYYY HH:mm:ss'" />
+								</div>
+							</div>
+							<div class="formElement25">
+								<div class="formElementLabel">Last Updated Date</div>
+								<div class="formElementValue">
+									<input class="formElementInput100" disabled type="text" value.bind="main.ts_last_updated | formatDate: 'M/D/YYYY HH:mm:ss'" />
+								</div>
+							</div>
+							<div class="formElement25">
+								<div class="formElementLabel">&nbsp;</div>
+								<div class="formElementValue">&nbsp;</div>
 							</div>
 						</div>
-						<div class="formElement25">
-							<div class="formElementLabel">Last Updated</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" disabled type="text" value.bind="main.ts_last_updated | formatDate: 'M/D/YYYY HH:mm:ss'" />
+						<div class="formRow">
+							<div class="formElement25">
+								<div class="formElementLabel">Schema Name</div>
+								<div class="formElementValue">
+									<input class="formElementInput100 ${main.txt_schema_name ? '' : 'valueRequired'}" type="text" value.bind="main.txt_schema_name" required />
+								</div>
 							</div>
-						</div>
-						<div class="formElement25">
-							<div class="formElementLabel">&nbsp;</div>
-							<div class="formElementValue">&nbsp;</div>
+							<div class="formElement25">
+								<div class="formElementLabel">Created By User</div>
+								<div class="formElementValue">
+									<input class="formElementInput100" disabled type="text" value.bind="main.txt_username" />
+								</div>
+							</div>
+							<div class="formElement50">
+								<div class="formElementLabel">Notes</div>
+								<div class="formElementValue">
+									<input class="formElementInput100" type="text" value.bind="main.txt_notes" />
+								</div>
+							</div>
+							<div class="formElement25">
+								<div class="formElementLabel">Public?</div>
+								<div class="formElementValue">
+									<input type="checkbox" checked.bind="main.b_public" />
+								</div>
+							</div>
 						</div>
 					</div>
-			
-			
-			
-					<div class="formRow">
-						<div class="formElement50">
-							<div class="formElementLabel">Title</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" type="text" value.bind="main.txt_title" />
+					<div class="formBodyDarkgray">
+						<div class="formRow">
+							<div class="formSubHeader">
+								Event Details
 							</div>
 						</div>
-						<div class="formElement50">
-							<div class="formElementLabel">URL Slug</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" type="text" value.bind="main.txt_url_slug" />
+						<div class="formRow">
+							<div class="detailsButtonControlDiv">
+								<input class="detailsButtonLeft" type="button" click.delegate="addDetailsRow(details, {parameters:[]})" value="Add Event" />
 							</div>
 						</div>
-					</div>
-			
-					<div class="formRow">
-						<div class="formElement25">
-							<div class="formElementLabel">Published?</div>
-							<div class="formElementValue">
-								<input type="checkbox" checked.bind="main.b_publish" />
-							</div>
-						</div>
-						<div class="formElement25">
-							<div class="formElementLabel">Publish Date</div>
-							<div class="formElementValue">
-								<input class="formElementInput100" type="text" value.bind="main.ts_publish_date | formatDate:'M/D/YYYY' & updateTrigger:'blur'" />
-							</div>
+						<div class="formRow">
+							<table class="tblDetailsParent" aurelia-table="data.bind: details; display-data.bind: $displayDataDetails;">
+								<thead>
+									<tr>
+										<th style="width: 100%" aut-sort="key: txt_event_name">Events</th>
+									</tr>
+								</thead>
+								<tbody repeat.for="n of $displayDataDetails" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
+									<tr>
+										<td>
+											<div class="detailsParentContainer">
+												<div class="detailsParentLabelValueSection">
+													<div class="detailsParentElement">
+														<div class="detailsParentLabel">Event:</div>
+														<div class="detailsParentValue">
+															<input class="detailElementInput50 ${n.txt_event_name ? '' : 'valueRequired'}" type="text" value.bind="n.txt_event_name" required />
+														</div>
+													</div>
+													<div class="detailsParentElement">
+														<div class="detailsParentLabel">Notes:</div>
+														<div class="detailsParentValue">
+															<input class="detailElementInput50" type="text" value.bind="n.txt_notes" />
+														</div>
+													</div>
+												</div>
+												<div class="detailsParentActionSection">
+													<div class="hyperlink" click.delegate="deleteDetailsRow(details, n)">Delete Event</div>
+												</div>
+											</div>
+											
+											<div class="detailsParentLabel">Parameters:</div>
+
+											<div class="detailsChildContainer">
+												<div class="detailsButtonControlDiv">
+													<input class="detailsButtonLeft" type="button" click.delegate="addDetailsRow(n.parameters)" value="Add Parameter" />
+												</div>
+												<table class="tblDetailsChild" aurelia-table="data.bind: n.parameters; display-data.bind: $displayDataDetailsParameters;">
+													<thead>
+														<tr>
+															<th style="width: 10%">Order</th>
+															<th style="width: 20%">Param Name</th>
+															<th style="width: 10%">Data Type</th>
+															<th style="width: 58%">Notes</th>
+															<th style="width: 20px"></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr repeat.for="p of $displayDataDetailsParameters" class="${p.record_action == 'D' ? 'rowDetailsDelete' : p.record_action =='I' ? 'rowDetailsInsert' : ''}">
+															<td>
+																<input class="detailElementInput100 ${p.i_order ? '' : 'valueRequired'}" type="text" value.bind="p.i_order" required/>
+															</td>
+															<td>
+																<input class="detailElementInput100 ${p.txt_param_name ? '' : 'valueRequired'}" type="text" value.bind="p.txt_param_name" required />
+															</td>
+															<td>
+																<input class="detailElementInput100 ${p.txt_data_type ? '' : 'valueRequired'}" type="text" value.bind="p.txt_data_type" required />
+															</td>
+															<td>
+																<input class="detailElementInput100" type="text" value.bind="p.txt_notes" />
+															</td>
+															<td>
+																<img class="xDeleteImage" click.delegate="deleteDetailsRowGrandchild(n, n.parameters, p)" src="../images/x-mark.png" />
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 
-					<div class="buttonControlDiv">
-						<input class="recordButtonRight" type="button" click.delegate="saveRecord()" value="Save" disabled.bind="!isUpdateAllowed" />
-						<input class="recordButtonRight" type="button" click.delegate="deleteRecord()" value="Delete" disabled.bind="!isUpdateAllowed" />
-						<input class="recordButtonRight" type="button" click.delegate="newRecord()" value="New Record" />
+					<div class="formBodyGray">
+						<div class="formRow">
+							<div class="formSubHeader">
+								Event Parameters
+							</div>
+						</div>
+						<div class="formRow">
+							<div class="detailsButtonControlDiv">
+								<input class="detailsButtonLeft" type="button" click.delegate="addDetailsRow(parameters)" value="Add Record" />
+							</div>
+						</div>
+						<div class="formRow">
+							<table class="tblDetails" aurelia-table="data.bind: parameters; display-data.bind: $displayDataParameters;">
+								<thead>
+									<tr>
+										<th style="width: 20%" aut-sort="key: txt_data_type">Data Type</th>
+										<th style="width: 10%" aut-sort="key: i_bit_length">Bit Length</th>
+										<th style="width: 68%" aut-sort="key: txt_notes">Notes</th>
+										<th style="width: 20px"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr repeat.for="n of $displayDataParameters" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
+										<td>
+											<input class="detailElementInput100 ${n.txt_data_type ? '' : 'valueRequired'}" type="text" value.bind="n.txt_data_type" required />
+										</td>
+										<td>
+											<input class="detailElementInput100" type="text" value.bind="n.i_bit_length" required />
+										</td>
+										<td>
+											<input class="detailElementInput100" type="text" value.bind="n.txt_notes" />
+										</td>
+										<td>
+											<img class="xDeleteImage" click.delegate="deleteDetailsRow(parameters, n)" src="../images/x-mark.png" />
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
-					
-					<response-message class="responseMessageCustomElement" view-model.ref="msgPageDetails"></response-message>
+					<div class="formBodyDarkgray">
+						<div class="formRow">
+							<div class="buttonControlDiv">
+								<input class="recordButtonRight" type="button" click.delegate="saveRecord()" value="Save" disabled.bind="!isUpdateAllowed" />
+								<input class="recordButtonRight" type="button" click.delegate="deleteRecord()" value="Delete" disabled.bind="!isUpdateAllowed" />
+								<input class="recordButtonRight" type="button" click.delegate="newRecord()" value="New Record" />
+							</div>
+						</div>
+						<div class="formRow">
+							<response-message class="responseMessageCustomElement" view-model.ref="msgPageDetails"></response-message>
+						</div>
+					</div>
 				</div>
-
 
 				<div class="formHeader">Schema Record Export</div>
-				<div class="formBody">
-					<div class="formRow">
-						<div class="formElement100">
-							<div class="formElementLabel">Export Result</div>
-							<div class="formElementValue">
-								<textarea class="formElementTextarea100" rows="4"></textarea>
+				<div class="formContainer">
+					<div class="formBodyGray">
+						<div class="formRow">
+							<div class="formElement100">
+								<div class="formElementLabel">Export Result</div>
+								<div class="formElementValue">
+									<textarea class="formElementTextarea100" rows="4"></textarea>
+								</div>
 							</div>
 						</div>
-					<div class="buttonControlDiv">
-						<input class="recordButtonRight" type="button" click.delegate="exportRecord()" value="Export" />
+						<div class="formRow">
+							<div class="buttonControlDiv">
+								<input class="recordButtonRight" type="button" click.delegate="exportRecord()" value="Export" />
+							</div>
+						</div>
+						<div class="formRow">
+							<response-message class="responseMessageCustomElement" view-model.ref="msgPageExport"></response-message>
+						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>

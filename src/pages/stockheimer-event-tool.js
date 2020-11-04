@@ -113,39 +113,63 @@ export class StockheimerEventTool {
 		this.getDetails();
 	}
 
-	saveRecord() {
-		//calculate the action
-		if(this.main.uid)
+	saveRecord() {		
+		//check for required fields
+		var result = this.checkRequired();
+
+		if(result)
 		{
-			this.action = "update";
+			console.log('now saving...');
+
+			//calculate the action
+			if(this.main.uid)
+			{
+				this.action = "update";
+			}
+			else
+			{
+				this.action = "insert";
+			}
+
+			// var data = {
+			// 	main: JSON.stringify(this.main),
+			// 	action: this.action
+			// };
+
+			// $.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET"})
+			// .done((responseData, textStatus, xhr) => {
+			// 	this.key = responseData.data.key;
+			// 	this.getList();
+			// 	this.getDetails();
+			// })
+			// .fail((xhr) => {
+			// 	var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+			// 	this.msgPageDetails.messageError(responseData.userMessage);
+			// })
+			// .always((a, textStatus, c) => {
+			// 	var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
+			// 	var responseData = xhr.responseJSON;
+			// 	this.isSaving = false;
+			// });
+
 		}
-		else
+	}
+
+	checkRequired() {
+		var result = true;
+
+		var allRequiredFields = $("input[required]");
+		for(var i = 0; i < allRequiredFields.length; i++)
 		{
-			this.action = "insert";
+			if(!allRequiredFields[i].value)
+			{
+				$(allRequiredFields[i]).focus();
+				result = false;
+				break;
+			}
 		}
 
-		var data = {
-			main: JSON.stringify(this.main),
-			action: this.action
-		};
-
-		$.ajax({url: "./api/" + this.controllerName + "/getDetails", method: "GET"})
-		.done((responseData, textStatus, xhr) => {
-			this.key = responseData.data.key;
-			this.getList();
-			this.getDetails();
-		})
-		.fail((xhr) => {
-			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
-			this.msgPageDetails.messageError(responseData.userMessage);
-		})
-		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.isSaving = false;
-		});
-
-
+		return result;
 	}
 
 	deleteRecord() {
@@ -160,20 +184,67 @@ export class StockheimerEventTool {
 		};
 
 		//send the api request
-		$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
-		.done((responseData, textStatus, xhr) => {
-			this.key = "";
-			this.getList();
-			this.getDetails();
-		})
-		.fail((xhr) => {
-			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
-			this.msgPageDetails.messageError(responseData.userMessage);
-		})
-		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.isSaving = false;
-		});
+		// $.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
+		// .done((responseData, textStatus, xhr) => {
+		// 	this.key = "";
+		// 	this.getList();
+		// 	this.getDetails();
+		// })
+		// .fail((xhr) => {
+		// 	var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+		// 	this.msgPageDetails.messageError(responseData.userMessage);
+		// })
+		// .always((a, textStatus, c) => {
+		// 	var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
+		// 	var responseData = xhr.responseJSON;
+		// 	this.isSaving = false;
+		// });
+	}
+
+	addDetailsRow(parent, customJson) {
+		var r = {
+			is_dirty: true,
+			uid: null,
+			record_action: 'I'
+		}
+
+		if(customJson)
+		{
+			for (var key in customJson) {
+				if (customJson.hasOwnProperty(key)) {
+					r[key] = customJson[key];
+				}
+			}
+		}
+		parent.push(r);
+	}
+
+	deleteDetailsRow(parent, r) {
+		r.is_dirty = true;
+		if(r.uid)
+		{
+			if(r.record_action == "U")
+			{
+				r.record_action = "D";
+			}
+			else if(r.record_action == "D")
+			{
+				r.record_action = "U";
+			}
+		}
+		else 
+		{
+			var index = parent.indexOf(r);
+			if(index >= 0)
+			{
+				parent.splice(index, 1);
+			}
+		}
+	}
+
+	deleteDetailsRowGrandchild(grandParent, parent, r)
+	{
+		this.deleteDetailsRow(parent, r);
+		grandParent.is_dirty = true;
 	}
 }

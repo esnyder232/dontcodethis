@@ -145,6 +145,7 @@ class StockheimerEventToolController {
 					, se.txt_event_name
 					, se.txt_notes
 					, 'U' as record_action
+					, true as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					where sch.i_delete_flag is null
@@ -155,7 +156,8 @@ class StockheimerEventToolController {
 						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
-					);
+					)
+					order by se.txt_event_name;
 					
 					
 					select sed.uid
@@ -165,9 +167,10 @@ class StockheimerEventToolController {
 					, sed.txt_param_name
 					, sed.txt_data_type
 					, 'U' as record_action
+					, true as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
-					inner join stockheimer_event_details sed on sed.uid = sed.i_event_link_id and se.i_delete_flag is null
+					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and se.i_delete_flag is null
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (
@@ -176,13 +179,16 @@ class StockheimerEventToolController {
 						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
-					);
+					)
+					order by sed.i_order;
 					
 					
 					select sep.uid
 					, sep.i_schema_id
 					, sep.i_bit_length
 					, sep.txt_data_type
+					, 'U' as record_action
+					, true as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
 					where sch.i_delete_flag is null
@@ -193,8 +199,8 @@ class StockheimerEventToolController {
 						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
-					);
-					
+					)
+					order by sep.txt_data_type;
 					`;
 
 					sqlParams = {
@@ -227,7 +233,8 @@ class StockheimerEventToolController {
 			else 
 			{
 				main = {
-					is_update_allowed: true
+					is_update_allowed: true,
+					txt_username: userdata.username ? userdata.username : 'none'
 				};
 				details = [];
 				parameters = [];
