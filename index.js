@@ -137,7 +137,7 @@ app.post('/api/BlogDetails/saveComment', MW_GetUserData, BlogDetailsController.s
 app.get('/api/StockheimerEventTool/getList', MW_GetUserData, StockheimerEventToolController.getList);
 app.get('/api/StockheimerEventTool/getDetails', MW_GetUserData, StockheimerEventToolController.getDetails);
 app.post('/api/StockheimerEventTool/saveDetails', MW_GetUserData, StockheimerEventToolController.saveDetails);
-
+app.post('/api/StockheimerEventTool/exportDetails', MW_GetUserData, StockheimerEventToolController.exportDetails);
 
 //run the server
 app.listen(port, () => console.log(`DontCodeThis.com listening on port ${port}!`));

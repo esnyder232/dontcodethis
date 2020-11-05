@@ -16,7 +16,7 @@
 					You can also view public schemas or your own by clicking a record in the "Schema Records" table.
 				</p>
 				<p>
-					To export with this tool, scroll to the bottom and hit export. When exporting, 2 json objects are created: event_parameters and event_schema.
+					To export with this tool, scroll to the bottom and hit export. When exporting, 2 json objects are created: event_schema and event_parameters.
 				</p>
 				<hr>
 				<div class="listHeader">Schema Records</div>
@@ -259,7 +259,7 @@
 							<div class="formElement100">
 								<div class="formElementLabel">Export Result</div>
 								<div class="formElementValue">
-									<textarea class="formElementTextarea100" rows="4"></textarea>
+									<textarea class="formElementTextarea100" rows="4" value.bind="exportedData"></textarea>
 								</div>
 							</div>
 						</div>

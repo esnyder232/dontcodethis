@@ -17,6 +17,9 @@ export class StockheimerEventTool {
 
 		this.key = "";
 		this.isAttached = false;
+		this.isSaving = false;
+		this.isExporting = false;
+		this.exportedData = "";
 
 		this.pageSize = 20;
 	}
@@ -117,9 +120,11 @@ export class StockheimerEventTool {
 		//check for required fields
 		var result = this.checkRequired();
 
-		if(result)
+		if(result && !this.isSaving)
 		{
 			console.log('now saving...');
+			this.msgPageDetails.messageSuccess("Saving...");
+			this.isSaving = true;
 
 			//calculate the action
 			if(this.main.uid)
@@ -180,35 +185,41 @@ export class StockheimerEventTool {
 		//warn the user
 		var answer = window.confirm("Are you sure you want to delete this record?");
 
-		this.action = "delete";
+		if(answer && !this.isSaving)
+		{
+			this.action = "delete";
 
-		var data = {
-			main: JSON.stringify(this.main),
-			details: JSON.stringify(this.details),
-			parameters: JSON.stringify(this.parameters),
-			action: this.action
-		};
+			this.msgPageDetails.messageSuccess("Deleting...");
+			this.isSaving = true;
 
-		//send the api request
-		$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
-		.done((responseData, textStatus, xhr) => {
-			this.key = "";
-			this.msgPageDetails.messageSuccess(responseData.userMessage);
+			var data = {
+				main: JSON.stringify(this.main),
+				details: JSON.stringify(this.details),
+				parameters: JSON.stringify(this.parameters),
+				action: this.action
+			};
 
-			this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: ""});
-			
-			this.getList();
-			this.getDetails();
-		})
-		.fail((xhr) => {
-			var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
-			this.msgPageDetails.messageError(responseData.userMessage);
-		})
-		.always((a, textStatus, c) => {
-			var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
-			var responseData = xhr.responseJSON;
-			this.isSaving = false;
-		});
+			//send the api request
+			$.ajax({url: "./api/" + this.controllerName + "/saveDetails", method: "POST", data: data})
+			.done((responseData, textStatus, xhr) => {
+				this.key = "";
+				this.msgPageDetails.messageSuccess(responseData.userMessage);
+
+				this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: ""});
+				
+				this.getList();
+				this.getDetails();
+			})
+			.fail((xhr) => {
+				var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+				this.msgPageDetails.messageError(responseData.userMessage);
+			})
+			.always((a, textStatus, c) => {
+				var xhr = this.globalfuncs.alwaysGetXhr(a, textStatus, c);
+				var responseData = xhr.responseJSON;
+				this.isSaving = false;
+			});
+		}
 	}
 
 	addDetailsRow(parent, customJson) {
@@ -256,5 +267,35 @@ export class StockheimerEventTool {
 	{
 		this.deleteDetailsRow(parent, r);
 		grandParent.is_dirty = true;
+	}
+
+	exportRecord() {
+
+		if(!this.isExporting)
+		{
+			var data = {
+				main: JSON.stringify(this.main)
+			};
+
+			this.isExporting = true;
+
+			this.msgPageExport.messageSuccess("Exporting...");
+
+			$.ajax({url: "./api/" + this.controllerName + "/exportDetails", method: "POST", data: data})
+			.done((responseData, textStatus, xhr) => {
+				console.log('esxport returned');
+				console.log(responseData.data.main)
+
+				this.exportedData = JSON.stringify(responseData.data.main);
+				this.msgPageExport.messageSuccess(responseData.userMessage);
+			})
+			.fail((xhr) => {
+				var responseData = this.globalfuncs.getDataObject(xhr.responseJSON);
+				this.msgPageExport.messageError(responseData.userMessage);
+			})
+			.always((a, textStatus, c) => {
+				this.isExporting = false;			
+			});
+		}
 	}
 }

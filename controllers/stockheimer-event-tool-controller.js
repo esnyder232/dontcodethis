@@ -156,7 +156,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					order by se.txt_event_name;
+					order by se.uid;
 					
 					
 					select sed.uid
@@ -200,7 +200,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					order by sep.txt_data_type;
+					order by sep.uid;
 					`;
 
 					sqlParams = {
@@ -639,7 +639,175 @@ class StockheimerEventToolController {
 		res.status(statusResponse).json({userMessage: userMessage, data: data});
 	}
 
+	async exportDetails(req, res) {
+		var bError = false;
+		var sco = null;
+		var sqlStr = "";
+		var sqlParams = {};
+		var sqlData = [];
+		var userMessage = "";
+		var data = {};
+		var userdata = {};
+		var main = {};
+		var events = [];
+		var parameters = [];
 
+		var key = "";
+		
+		try {
+			userdata = req.userdata;
+			sco = await db.connect();
+			var temp = JSON.parse(req.body.main);
+			key = temp.uid;
+			
+			//retrieve an existing record
+			if(key) 
+			{
+				//validate inputs
+				userMessage = ValidFuncs.validateInt(key);
+				bError = userMessage != "success";
+				if(bError)
+				{
+					userMessage = "Invalid parameter: uid is not an integer.";
+				}
+				else
+				{
+					key = Number.parseInt(key);
+				}
+
+				//get aurelia app routes and nav bar so the site will load
+				if(!bError)
+				{
+					sqlStr = `
+					drop table if exists temp_event_ids;
+
+					select sch.uid
+					, sch.txt_schema_name
+					, sch.txt_notes
+					, sch.ts_last_updated
+					from stockheimer_event_schema sch
+					left join users u on sch.i_user = u.uid
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
+
+					select se.uid as se_uid, row_number() over(order by se.uid) event_id
+					into Temp temp_event_ids
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					order by se.uid;
+
+					select ids.event_id
+					, se.txt_event_name
+					, se.txt_notes
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					inner join temp_event_ids ids on se.uid = ids.se_uid
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					)
+					order by ids.event_id;
+
+					select sed.txt_param_name
+					, sed.txt_data_type
+					, sed.i_order
+					, sed.txt_notes
+					, ids.event_id as i_event_link_id
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
+					inner join temp_event_ids ids on sed.i_event_link_id = ids.se_uid
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					)
+					order by ids.event_id, sed.i_order;
+
+					select sep.txt_data_type
+					, sep.i_bit_length
+					, sep.txt_notes
+					, sep.uid
+					from stockheimer_event_schema sch
+					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					)
+					order by sep.txt_data_type;
+					`;
+
+					sqlParams = {
+						uid: key,
+						bAdmin: userdata.bAdmin,
+						userId: userdata.uid ? userdata.uid : '0'
+					};
+
+					sqlData = await sco.multi(sqlStr, sqlParams);
+
+					if(sqlData.length > 0)
+					{
+						main = GenFuncs.getNullObjectFromArray(sqlData[1], 0);
+						var eventParent = GenFuncs.getNullArray(sqlData, 3);
+						var eventChildren = GenFuncs.getNullArray(sqlData, 4);
+						parameters = GenFuncs.getNullArray(sqlData, 5);
+
+						events = GenFuncs.joinTables(eventParent, eventChildren, 'event_id', 'i_event_link_id', 'parameters');
+					}
+					else
+					{
+						bError = true;
+						userMessage = "Error occurred when exporting.";
+					}
+				}
+			}
+		}
+		catch(ex) {
+			userMessage = "Internal server error while exporting.";
+			GenFuncs.logErrorGeneral(req.path, "Exception caught in exporting try catch: " + ex, ex.stack, userdata.uid, userMessage);
+			var bError = true;
+		}
+		finally{
+			if(sco)
+			{
+				sco.done();
+			}
+		}
+
+		//send the response
+		var statusResponse = 200;
+		if(bError)		
+			statusResponse = 500;
+
+		main.events = events;
+		main.parameters = parameters;
+		data.main = main;
+
+		res.status(statusResponse).json({userMessage: userMessage, data: data});
+	}
 
 }
 
