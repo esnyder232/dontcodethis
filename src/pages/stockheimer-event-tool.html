@@ -16,7 +16,7 @@
 					You can also view public schemas or your own by clicking a record in the "Schema Records" table.
 				</p>
 				<p>
-					To export with this tool, scroll to the bottom and hit export. When exporting, 2 json objects are created: event_schema and event_parameters.
+					To export with this tool, scroll to the bottom and hit export. When exporting, a json object is created containing the schema, events, and parameters.
 				</p>
 				<hr>
 				<div class="listHeader">Schema Records</div>
@@ -131,8 +131,8 @@
 										<th style="width: 100%" aut-sort="key: txt_event_name">Events</th>
 									</tr>
 								</thead>
-								<tbody repeat.for="n of $displayDataDetails" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
-									<tr>
+								<tbody class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
+									<tr repeat.for="n of $displayDataDetails" change.delegate="dirtyRecord(n)">
 										<td>
 											<div class="detailsParentContainer">
 												<div class="detailsParentLabelValueSection">
@@ -158,7 +158,7 @@
 
 											<div class="detailsChildContainer">
 												<div class="detailsButtonControlDiv">
-													<input class="detailsButtonLeft" type="button" click.delegate="addDetailsRow(n.parameters)" value="Add Parameter" />
+													<input class="detailsButtonLeft" type="button" click.delegate="addEventParametersDetailsRow(n)" value="Add Parameter" />
 												</div>
 												<table class="tblDetailsChild" aurelia-table="data.bind: n.parameters; display-data.bind: $displayDataDetailsParameters;">
 													<thead>
@@ -171,7 +171,7 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr repeat.for="p of $displayDataDetailsParameters" class="${p.record_action == 'D' ? 'rowDetailsDelete' : p.record_action =='I' ? 'rowDetailsInsert' : ''}">
+														<tr repeat.for="p of $displayDataDetailsParameters" class="${p.record_action == 'D' ? 'rowDetailsDelete' : p.record_action =='I' ? 'rowDetailsInsert' : ''}" change.delegate="dirtyRecordGrandchild(n, p)">
 															<td>
 																<input class="detailElementInput100 ${p.i_order ? '' : 'valueRequired'}" type="text" value.bind="p.i_order" required/>
 															</td>
@@ -206,29 +206,49 @@
 						</div>
 						<div class="formRow">
 							<div class="detailsButtonControlDiv">
-								<input class="detailsButtonLeft" type="button" click.delegate="addDetailsRow(parameters)" value="Add Record" />
+								<input class="detailsButtonLeft" type="button" click.delegate="addParametersDetailsRow()" value="Add Record" />
 							</div>
 						</div>
 						<div class="formRow">
 							<table class="tblDetails" aurelia-table="data.bind: parameters; display-data.bind: $displayDataParameters;">
 								<thead>
 									<tr>
-										<th style="width: 20%" aut-sort="key: txt_data_type">Data Type</th>
-										<th style="width: 10%" aut-sort="key: i_bit_length">Bit Length</th>
-										<th style="width: 68%" aut-sort="key: txt_notes">Notes</th>
+										<th style="width: 16%" aut-sort="key: txt_data_type">Data Type</th>
+										<th style="width: 48%" aut-sort="key: txt_notes">Notes</th>
+										<th style="width: 10%" aut-sort="key: txt_actual_data_type">Actual Data Type</th>
+										<th style="width: 10%" >Min Value</th>
+										<th style="width: 10%" >Max Value</th>
+										<th style="width: 4%" aut-sort="key: i_bits">Bits</th>
 										<th style="width: 20px"></th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr repeat.for="n of $displayDataParameters" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
+									<tr repeat.for="n of $displayDataParameters" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}" change.delegate="dirtyRecord(n)">
 										<td>
 											<input class="detailElementInput100 ${n.txt_data_type ? '' : 'valueRequired'}" type="text" value.bind="n.txt_data_type" required />
 										</td>
 										<td>
-											<input class="detailElementInput100" type="text" value.bind="n.i_bit_length" required />
+											<input class="detailElementInput100" type="text" value.bind="n.txt_notes" />
 										</td>
 										<td>
-											<input class="detailElementInput100" type="text" value.bind="n.txt_notes" />
+											<select class="detailElementInput100" value.bind="n.txt_actual_data_type" change.delegate="parameterCodeActualDataTypeChanged(n)">
+												<option repeat.for="pc of parameterCodes" model.bind="pc.txt_actual_data_type">${pc.txt_actual_data_type}</option>
+											</select>
+										</td>
+										<td>
+											<div>
+												${n.min_value}
+											</div>
+										</td>
+										<td>
+											<div>
+												${n.max_value}
+											</div>
+										</td>
+										<td>
+											<div>
+												${n.i_bits}
+											</div>
 										</td>
 										<td>
 											<img class="xDeleteImage" click.delegate="deleteDetailsRow(parameters, n)" src="../images/x-mark.png" />

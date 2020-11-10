@@ -94,6 +94,7 @@ class StockheimerEventToolController {
 		var main = {};
 		var details = [];
 		var parameters = []
+		var parameterCodes = [];
 
 		try {
 			userdata = req.userdata;
@@ -144,7 +145,7 @@ class StockheimerEventToolController {
 					, se.txt_event_name
 					, se.txt_notes
 					, 'U' as record_action
-					, true as is_dirty
+					, false as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					where sch.i_delete_flag is null
@@ -166,7 +167,7 @@ class StockheimerEventToolController {
 					, sed.txt_param_name
 					, sed.txt_data_type
 					, 'U' as record_action
-					, true as is_dirty
+					, false as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
@@ -181,16 +182,28 @@ class StockheimerEventToolController {
 					)
 					order by sed.i_order;
 					
-					
 					select sep.uid
 					, sep.i_schema_id
-					, sep.i_bit_length
 					, sep.txt_data_type
 					, sep.txt_notes
+					, sep.txt_actual_data_type
+					, adt.min_value
+					, adt.max_value
+					, adt.i_bits
+					, adt.txt_notes as adt_notes
 					, 'U' as record_action
-					, true as is_dirty
+					, false as is_dirty
 					from stockheimer_event_schema sch
 					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
+					left join (
+						select txt_actual_data_type
+						, coalesce(cast(round(n_min_value, i_precision) as text), cast(i_min_value as text), '-infinite') as min_value
+						, coalesce(cast(round(n_max_value, i_precision) as text), cast(i_max_value as text), '+infinite') as max_value
+						, i_bits
+						, txt_notes
+						from stockheimer_actual_data_types
+						where i_delete_flag is null
+					) adt on sep.txt_actual_data_type = adt.txt_actual_data_type
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (
@@ -201,6 +214,15 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
 					order by sep.uid;
+
+					select txt_actual_data_type
+					, coalesce(cast(round(n_min_value, i_precision) as text), cast(i_min_value as text), '-infinite') as min_value
+					, coalesce(cast(round(n_max_value, i_precision) as text), cast(i_max_value as text), '+infinite') as max_value
+					, i_bits
+					, txt_notes
+					from stockheimer_actual_data_types
+					where i_delete_flag is null
+					order by uid;
 					`;
 
 					sqlParams = {
@@ -217,6 +239,7 @@ class StockheimerEventToolController {
 						var eventParent = GenFuncs.getNullArray(sqlData, 1);
 						var eventChildren = GenFuncs.getNullArray(sqlData, 2);
 						parameters = GenFuncs.getNullArray(sqlData, 3);
+						parameterCodes = GenFuncs.getNullArray(sqlData, 4);
 
 						details = GenFuncs.joinTables(eventParent, eventChildren, 'uid', 'i_event_link_id', 'parameters');
 					}
@@ -238,8 +261,34 @@ class StockheimerEventToolController {
 				};
 				details = [];
 				parameters = [];
+
+				//get parameter codes
+				sqlStr = `
+				select txt_actual_data_type
+				, coalesce(cast(round(n_min_value, i_precision) as text), cast(i_min_value as text), '-infinite') as min_value
+				, coalesce(cast(round(n_max_value, i_precision) as text), cast(i_max_value as text), '+infinite') as max_value
+				, i_bits
+				, txt_notes
+				from stockheimer_actual_data_types
+				where i_delete_flag is null
+				order by uid
+				`;
+
+				sqlParams = {};
+
+				sqlData = await sco.multi(sqlStr, sqlParams);
+
+				if(sqlData.length > 0)
+				{
+					parameterCodes = GenFuncs.getNullArray(sqlData, 0);
+				}
+				else
+				{
+					bError = true;
+					userMessage = "Error occurred when getting details.";
+					parameterCodes = [];
+				}
 			}
-			
 		}
 		catch(ex) {
 			userMessage = "Internal server error.";
@@ -261,6 +310,7 @@ class StockheimerEventToolController {
 		data.main = main;
 		data.details = details;
 		data.parameters = parameters;
+		data.parameterCodes = parameterCodes;
 
 		res.status(statusResponse).json({userMessage: userMessage, data: data});
 	}
@@ -557,18 +607,18 @@ class StockheimerEventToolController {
 						if(currentParameter.record_action == "I")
 						{
 							sqlParameterStr = `insert into stockheimer_event_parameters
-							(i_schema_id, i_bit_length, ts_last_updated, txt_last_updated_user, ts_created, txt_data_type, txt_notes)
-							select $(i_schema_id), $(i_bit_length), current_timestamp, $(txt_last_updated_user), current_timestamp, $(txt_data_type), $(txt_notes);`;
+							(i_schema_id, ts_last_updated, txt_last_updated_user, ts_created, txt_data_type, txt_notes, txt_actual_data_type)
+							select $(i_schema_id), current_timestamp, $(txt_last_updated_user), current_timestamp, $(txt_data_type), $(txt_notes), $(txt_actual_data_type);`;
 						}
 						//update
 						else if(currentParameter.record_action == "U")
 						{
 							sqlParameterStr = `update stockheimer_event_parameters
-							set i_bit_length = $(i_bit_length),
-							ts_last_updated = current_timestamp,
+							set ts_last_updated = current_timestamp,
 							txt_last_updated_user = $(txt_last_updated_user),
 							txt_data_type = $(txt_data_type),
-							txt_notes = $(txt_notes)
+							txt_notes = $(txt_notes),
+							txt_actual_data_type = $(txt_actual_data_type)
 							where uid = $(uid);`;
 							currentParameterUid = currentParameter.uid;
 						}
@@ -585,9 +635,9 @@ class StockheimerEventToolController {
 
 						sqlParams = {
 							i_schema_id: key,
-							i_bit_length: currentParameter.i_bit_length,
 							txt_data_type: currentParameter.txt_data_type,
 							txt_notes: currentParameter.txt_notes,
+							txt_actual_data_type: currentParameter.txt_actual_data_type,
 							txt_last_updated_user: userdata.username,
 							uid: currentParameterUid
 						};
@@ -696,7 +746,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-
+					
 					select se.uid as se_uid, row_number() over(order by se.uid) event_id
 					into Temp temp_event_ids
 					from stockheimer_event_schema sch
@@ -704,8 +754,8 @@ class StockheimerEventToolController {
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					order by se.uid;
-
-					select ids.event_id
+					
+					select cast(ids.event_id as int) as event_id
 					, se.txt_event_name
 					, se.txt_notes
 					from stockheimer_event_schema sch
@@ -721,12 +771,12 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
 					order by ids.event_id;
-
+					
 					select sed.txt_param_name
 					, sed.txt_data_type
 					, sed.i_order
 					, sed.txt_notes
-					, ids.event_id as i_event_link_id
+					, cast(ids.event_id as int) as i_event_link_id
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
@@ -741,13 +791,21 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
 					order by ids.event_id, sed.i_order;
-
+					
 					select sep.txt_data_type
-					, sep.i_bit_length
 					, sep.txt_notes
+					, sep.txt_actual_data_type
 					, sep.uid
+					, cast(adt.i_min_value as int) as i_min_value
+					, cast(adt.i_max_value as int) as i_max_value
+					, round(adt.n_min_value, adt.i_precision) as n_min_value
+					, round(adt.n_max_value, adt.i_precision) as n_max_value
+					, adt.i_bits
+					, cast(adt.i_precision as int) as i_precision
+					, round(0.1 ^ adt.i_precision, adt.i_precision) as precision_coefficient
 					from stockheimer_event_schema sch
 					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
+					inner join stockheimer_actual_data_types adt on sep.txt_actual_data_type = adt.txt_actual_data_type and adt.i_delete_flag is null
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (

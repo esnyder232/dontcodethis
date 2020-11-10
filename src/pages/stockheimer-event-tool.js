@@ -12,6 +12,7 @@ export class StockheimerEventTool {
 		this.main = {};
 		this.details = [];
 		this.parameters = [];
+		this.parameterCodes = [];
 		this.isUpdateAllowed = true;		
 		this.action = "insert";
 
@@ -75,6 +76,7 @@ export class StockheimerEventTool {
 		this.main = {};
 		this.details = [];
 		this.parameters = [];
+		this.parameterCodes = [];
 		this.isUpdateAllowed = true;
 		
 		//send the api request
@@ -84,11 +86,13 @@ export class StockheimerEventTool {
 			this.main = this.globalfuncs.getDataObject(responseData.data.main);
 			this.details = this.globalfuncs.getDataObject(responseData.data.details);
 			this.parameters = this.globalfuncs.getDataObject(responseData.data.parameters);
+			this.parameterCodes = this.globalfuncs.getDataArray(responseData.data.parameterCodes);
 
 			console.log('details came back successful');
 			console.log(this.main);
 			console.log(this.details);
 			console.log(this.parameters);
+			console.log(this.parameterCodes);
 
 			this.isUpdateAllowed = this.main.is_update_allowed;
 			console.log(this.isUpdateAllowed)
@@ -114,6 +118,22 @@ export class StockheimerEventTool {
 		this.globalfuncs.appRouter.navigateToRoute("stockheimer-event-tool", {id: ""});
 		this.key = "";
 		this.getDetails();
+	}
+
+	parameterCodeActualDataTypeChanged(parameter) {
+		var code = this.parameterCodes.find((x) => {return x.txt_actual_data_type == parameter.txt_actual_data_type;});
+		if(code)
+		{
+			parameter.min_value = code.min_value;
+			parameter.max_value = code.max_value;
+			parameter.i_bits = code.i_bits;
+		}
+		else
+		{
+			parameter.min_value = null;
+			parameter.max_value = null;
+			parameter.i_bits = null;
+		}
 	}
 
 	saveRecord() {		
@@ -238,6 +258,8 @@ export class StockheimerEventTool {
 			}
 		}
 		parent.push(r);
+
+		return r;
 	}
 
 	deleteDetailsRow(parent, r) {
@@ -267,6 +289,38 @@ export class StockheimerEventTool {
 	{
 		this.deleteDetailsRow(parent, r);
 		grandParent.is_dirty = true;
+	}
+
+
+	dirtyRecord(n) {
+		n.is_dirty = true;
+	}
+
+	dirtyRecordGrandchild(parent, child) {
+		child.is_dirty = true;
+		parent.is_dirty = true;
+	}
+
+	addEventParametersDetailsRow(event) {
+		this.addDetailsRow(event.parameters);
+		event.is_dirty = true;
+	}
+
+	addParametersDetailsRow() {
+		var customJson = {
+			min_value: null,
+			max_value: null,
+			i_bits: null
+		}
+
+		if(this.parameterCodes.length > 0)
+		{
+			customJson.min_value = this.parameterCodes[0].min_value;
+			customJson.max_value = this.parameterCodes[0].max_value;
+			customJson.i_bits = this.parameterCodes[0].i_bits;
+		}
+
+		this.addDetailsRow(this.parameters, customJson);
 	}
 
 	exportRecord() {
