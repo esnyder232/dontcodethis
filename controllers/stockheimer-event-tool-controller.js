@@ -796,8 +796,8 @@ class StockheimerEventToolController {
 					, sep.txt_notes
 					, sep.txt_actual_data_type
 					, sep.uid
-					, cast(adt.i_min_value as int) as i_min_value
-					, cast(adt.i_max_value as int) as i_max_value
+					, cast(adt.i_min_value as bigint) as i_min_value
+					, cast(adt.i_max_value as bigint) as i_max_value
 					, round(adt.n_min_value, adt.i_precision) as n_min_value
 					, round(adt.n_max_value, adt.i_precision) as n_max_value
 					, adt.i_bits
