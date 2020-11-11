@@ -757,7 +757,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-					
+
 					select sch.uid
 					, sch.txt_schema_name
 					, sch.txt_notes
@@ -780,7 +780,7 @@ class StockheimerEventToolController {
 					, se.txt_event_name
 					, se.txt_notes
 					, cast(sum(coalesce(tpd.min_bytes, 0)) as int) as sum_min_bytes
-					, case when max(coalesce(tpd.b_size_varies_num, 0)) = 1 then true else false end as b_size_varies_num
+					, case when max(coalesce(tpd.b_size_varies_num, 0)) = 1 then true else false end as b_size_varies
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					left join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
