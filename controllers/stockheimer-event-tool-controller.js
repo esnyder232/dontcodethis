@@ -729,7 +729,32 @@ class StockheimerEventToolController {
 				if(!bError)
 				{
 					sqlStr = `
-					drop table if exists temp_event_ids;
+					drop table if exists temp_parameter_data;
+
+					select sch.uid as schema_uid
+					, sep.txt_data_type
+					, sep.txt_actual_data_type
+					, adt.i_min_value
+					, adt.i_max_value
+					, round(adt.n_min_value, adt.i_precision) as n_min_value
+					, round(adt.n_max_value, adt.i_precision) as n_max_value
+					, adt.i_precision
+					, round(0.1 ^ adt.i_precision, adt.i_precision) as precision_coefficient
+					, adt.i_bits
+					, cast(ceiling(cast(adt.i_bits as decimal)/8) as int) as min_bytes
+					into temporary temp_parameter_data
+					from stockheimer_event_schema sch
+					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
+					inner join stockheimer_actual_data_types adt on sep.txt_actual_data_type = adt.txt_actual_data_type and adt.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					and (
+						$(bAdmin) = true --admin can see everything
+						OR
+						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
+						OR
+						coalesce(sch.b_public, false) = true --anyone can see public
+					);
 
 					select sch.uid
 					, sch.txt_schema_name
@@ -746,21 +771,15 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-					
-					select se.uid as se_uid, row_number() over(order by se.uid) event_id
-					into Temp temp_event_ids
-					from stockheimer_event_schema sch
-					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
-					where sch.i_delete_flag is null
-					and sch.uid = $(uid)
-					order by se.uid;
-					
-					select cast(ids.event_id as int) as event_id
+
+					select se.uid
 					, se.txt_event_name
 					, se.txt_notes
+					, cast(sum(coalesce(tpd.min_bytes, 0)) as int) as sum_min_bytes
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
-					inner join temp_event_ids ids on se.uid = ids.se_uid
+					left join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
+					left join temp_parameter_data tpd on sch.uid = tpd.schema_uid and sed.txt_data_type = tpd.txt_data_type
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (
@@ -770,17 +789,27 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					order by ids.event_id;
+					group by se.uid, se.txt_event_name, se.txt_notes
+					order by se.uid;
 					
-					select sed.txt_param_name
+					select sed.i_event_link_id
+					, sed.txt_param_name
 					, sed.txt_data_type
 					, sed.i_order
 					, sed.txt_notes
-					, cast(ids.event_id as int) as i_event_link_id
+					, tpd.txt_actual_data_type
+					, cast(tpd.i_min_value as bigint) as i_min_value
+					, cast(tpd.i_max_value as bigint) as i_max_value
+					, tpd.n_min_value
+					, tpd.n_max_value
+					, cast(tpd.i_precision as int) as i_precision
+					, tpd.precision_coefficient
+					, tpd.i_bits
+					, tpd.min_bytes
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
-					inner join temp_event_ids ids on sed.i_event_link_id = ids.se_uid
+					inner join temp_parameter_data tpd on sch.uid = tpd.schema_uid and sed.txt_data_type = tpd.txt_data_type
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (
@@ -790,34 +819,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					order by ids.event_id, sed.i_order;
-					
-					select sep.txt_data_type
-					, sep.txt_notes
-					, sep.txt_actual_data_type
-					, sep.uid
-					, cast(adt.i_min_value as bigint) as i_min_value
-					, cast(adt.i_max_value as bigint) as i_max_value
-					, round(adt.n_min_value, adt.i_precision) as n_min_value
-					, round(adt.n_max_value, adt.i_precision) as n_max_value
-					, cast(adt.i_precision as int) as i_precision
-					, round(0.1 ^ adt.i_precision, adt.i_precision) as precision_coefficient
-					, adt.i_bits
-					, cast(round(adt.i_bits/8, 0) as int) as i_bytes
-					from stockheimer_event_schema sch
-					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
-					inner join stockheimer_actual_data_types adt on sep.txt_actual_data_type = adt.txt_actual_data_type and adt.i_delete_flag is null
-					where sch.i_delete_flag is null
-					and sch.uid = $(uid)
-					and (
-						$(bAdmin) = true --admin can see everything
-						OR
-						coalesce(sch.i_user, $(userId)) = $(userId) --owner can see only theirs
-						OR
-						coalesce(sch.b_public, false) = true --anyone can see public
-					)
-					order by sep.txt_data_type;
-					
+					order by se.uid, sed.i_order;
 					`;
 
 					sqlParams = {
@@ -830,12 +832,11 @@ class StockheimerEventToolController {
 
 					if(sqlData.length > 0)
 					{
-						main = GenFuncs.getNullObjectFromArray(sqlData[1], 0);
+						main = GenFuncs.getNullObjectFromArray(sqlData[2], 0);
 						var eventParent = GenFuncs.getNullArray(sqlData, 3);
 						var eventChildren = GenFuncs.getNullArray(sqlData, 4);
-						parameters = GenFuncs.getNullArray(sqlData, 5);
 
-						events = GenFuncs.joinTables(eventParent, eventChildren, 'event_id', 'i_event_link_id', 'parameters');
+						events = GenFuncs.joinTables(eventParent, eventChildren, 'uid', 'i_event_link_id', 'parameters');
 					}
 					else
 					{
