@@ -800,9 +800,10 @@ class StockheimerEventToolController {
 					, cast(adt.i_max_value as bigint) as i_max_value
 					, round(adt.n_min_value, adt.i_precision) as n_min_value
 					, round(adt.n_max_value, adt.i_precision) as n_max_value
-					, adt.i_bits
 					, cast(adt.i_precision as int) as i_precision
 					, round(0.1 ^ adt.i_precision, adt.i_precision) as precision_coefficient
+					, adt.i_bits
+					, cast(round(adt.i_bits/8, 0) as int) as i_bytes
 					from stockheimer_event_schema sch
 					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
 					inner join stockheimer_actual_data_types adt on sep.txt_actual_data_type = adt.txt_actual_data_type and adt.i_delete_flag is null
@@ -816,6 +817,7 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
 					order by sep.txt_data_type;
+					
 					`;
 
 					sqlParams = {
