@@ -742,6 +742,8 @@ class StockheimerEventToolController {
 					, round(0.1 ^ adt.i_precision, adt.i_precision) as precision_coefficient
 					, adt.i_bits
 					, cast(ceiling(cast(adt.i_bits as decimal)/8) as int) as min_bytes
+					, b_size_varies
+					, case when coalesce(b_size_varies, false) then 1 else 0 end as b_size_varies_num
 					into temporary temp_parameter_data
 					from stockheimer_event_schema sch
 					inner join stockheimer_event_parameters sep on sch.uid = sep.i_schema_id and sep.i_delete_flag is null
@@ -755,7 +757,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-
+					
 					select sch.uid
 					, sch.txt_schema_name
 					, sch.txt_notes
@@ -772,10 +774,13 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
 
+
+
 					select se.uid
 					, se.txt_event_name
 					, se.txt_notes
 					, cast(sum(coalesce(tpd.min_bytes, 0)) as int) as sum_min_bytes
+					, case when max(coalesce(tpd.b_size_varies_num, 0)) = 1 then true else false end as b_size_varies_num
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					left join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
@@ -791,7 +796,8 @@ class StockheimerEventToolController {
 					)
 					group by se.uid, se.txt_event_name, se.txt_notes
 					order by se.uid;
-					
+
+
 					select sed.i_event_link_id
 					, sed.txt_param_name
 					, sed.txt_data_type
@@ -806,6 +812,7 @@ class StockheimerEventToolController {
 					, tpd.precision_coefficient
 					, tpd.i_bits
 					, tpd.min_bytes
+					, coalesce(tpd.b_size_varies, false) as b_size_varies
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
@@ -820,6 +827,7 @@ class StockheimerEventToolController {
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
 					order by se.uid, sed.i_order;
+
 					`;
 
 					sqlParams = {

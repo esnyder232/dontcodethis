@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1605117529__2020-11-11_12-58-49","dtCreated":"2020-11-11_12-58-49","dtCreated_X":"1605117529","migrations":[{"ts_log_time":"2020-11-11T17:34:13.028Z","txt_message":"alter table stockheimer_actual_data_types\r\nadd column b_size_varies boolean\r\n"}]}
