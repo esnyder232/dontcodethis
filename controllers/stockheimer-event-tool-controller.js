@@ -39,6 +39,7 @@ class StockheimerEventToolController {
 					OR
 					coalesce(sch.b_public, false) = true --anyone can see public
 				)
+				order by sch.uid;
 				`;
 
 				sqlParams = {
@@ -729,8 +730,18 @@ class StockheimerEventToolController {
 				if(!bError)
 				{
 					sqlStr = `
+					drop table if exists temp_event_ids;
 					drop table if exists temp_parameter_data;
-
+					
+					
+					select se.uid as se_uid, row_number() over(order by se.uid) event_id
+					into Temp temp_event_ids
+					from stockheimer_event_schema sch
+					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					where sch.i_delete_flag is null
+					and sch.uid = $(uid)
+					order by se.uid;
+					
 					select sch.uid as schema_uid
 					, sep.txt_data_type
 					, sep.txt_actual_data_type
@@ -757,7 +768,9 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-
+					
+					
+					
 					select sch.uid
 					, sch.txt_schema_name
 					, sch.txt_notes
@@ -773,16 +786,18 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					);
-
-
-
-					select se.uid
+					
+					
+					
+					select cast(se.uid as int) as original_uid
+					, cast(tei.event_id as int) as event_id
 					, se.txt_event_name
 					, se.txt_notes
 					, cast(sum(coalesce(tpd.min_bytes, 0)) as int) as sum_min_bytes
 					, case when max(coalesce(tpd.b_size_varies_num, 0)) = 1 then true else false end as b_size_varies
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
+					inner join temp_event_ids tei on se.uid = tei.se_uid
 					left join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
 					left join temp_parameter_data tpd on sch.uid = tpd.schema_uid and sed.txt_data_type = tpd.txt_data_type
 					where sch.i_delete_flag is null
@@ -794,11 +809,12 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					group by se.uid, se.txt_event_name, se.txt_notes
-					order by se.uid;
-
-
-					select sed.i_event_link_id
+					group by se.uid, tei.event_id, se.txt_event_name, se.txt_notes
+					order by tei.event_id asc;
+					
+					
+					select cast(sed.uid as int) as original_uid
+					, cast(tei.event_id as int) as event_id
 					, sed.txt_param_name
 					, sed.txt_data_type
 					, sed.i_order
@@ -816,7 +832,8 @@ class StockheimerEventToolController {
 					from stockheimer_event_schema sch
 					inner join stockheimer_events se on sch.uid = se.i_schema_id and se.i_delete_flag is null
 					inner join stockheimer_event_details sed on se.uid = sed.i_event_link_id and sed.i_delete_flag is null
-					inner join temp_parameter_data tpd on sch.uid = tpd.schema_uid and sed.txt_data_type = tpd.txt_data_type
+					inner join temp_event_ids tei on sed.i_event_link_id = tei.se_uid
+					left join temp_parameter_data tpd on sch.uid = tpd.schema_uid and sed.txt_data_type = tpd.txt_data_type
 					where sch.i_delete_flag is null
 					and sch.uid = $(uid)
 					and (
@@ -826,8 +843,7 @@ class StockheimerEventToolController {
 						OR
 						coalesce(sch.b_public, false) = true --anyone can see public
 					)
-					order by se.uid, sed.i_order;
-
+					order by se.uid asc, sed.i_order asc;
 					`;
 
 					sqlParams = {
@@ -840,11 +856,11 @@ class StockheimerEventToolController {
 
 					if(sqlData.length > 0)
 					{
-						main = GenFuncs.getNullObjectFromArray(sqlData[2], 0);
-						var eventParent = GenFuncs.getNullArray(sqlData, 3);
-						var eventChildren = GenFuncs.getNullArray(sqlData, 4);
+						main = GenFuncs.getNullObjectFromArray(sqlData[4], 0);
+						var eventParent = GenFuncs.getNullArray(sqlData, 5);
+						var eventChildren = GenFuncs.getNullArray(sqlData, 6);
 
-						events = GenFuncs.joinTables(eventParent, eventChildren, 'uid', 'i_event_link_id', 'parameters');
+						events = GenFuncs.joinTables(eventParent, eventChildren, 'event_id', 'event_id', 'parameters');
 					}
 					else
 					{
@@ -872,7 +888,6 @@ class StockheimerEventToolController {
 			statusResponse = 500;
 
 		main.events = events;
-		main.parameters = parameters;
 		data.main = main;
 
 		res.status(statusResponse).json({userMessage: userMessage, data: data});

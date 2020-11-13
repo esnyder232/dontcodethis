@@ -131,8 +131,8 @@
 										<th style="width: 100%" aut-sort="key: txt_event_name">Events</th>
 									</tr>
 								</thead>
-								<tbody class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
-									<tr repeat.for="n of $displayDataDetails" change.delegate="dirtyRecord(n)">
+								<tbody>
+									<tr repeat.for="n of $displayDataDetails" change.delegate="dirtyRecord(n)" class="${n.record_action == 'D' ? 'rowDetailsDelete' : n.record_action =='I' ? 'rowDetailsInsert' : ''}">
 										<td>
 											<div class="detailsParentContainer">
 												<div class="detailsParentLabelValueSection">
@@ -201,7 +201,7 @@
 					<div class="formBodyGray">
 						<div class="formRow">
 							<div class="formSubHeader">
-								Event Parameters
+								Event Parameter Data Types
 							</div>
 						</div>
 						<div class="formRow">
