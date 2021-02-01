@@ -126,12 +126,31 @@ export class App {
 
 	navbarItemClicked(navbarItem)
 	{
-		this.router.navigateToRoute(navbarItem.txt_module_name);
+		//navigate to internal module
+		if(!navbarItem.b_external)
+		{
+			this.router.navigateToRoute(navbarItem.txt_module_name);
+		}
+		//navigate to external link in new window
+		else
+		{
+			window.open(navbarItem.txt_ext_url);
+		}
 	}
 
 	navbarItemClickedMobile(navbarItem)
 	{
-		this.router.navigateToRoute(navbarItem.txt_module_name);
+		//navigate to internal module
+		if(!navbarItem.b_external)
+		{
+			this.router.navigateToRoute(navbarItem.txt_module_name);
+		}
+		//navigate to external link in new window
+		else
+		{
+			window.open(navbarItem.txt_ext_url);
+		}
+		
 		this.showHamburgerMenu = false;
 	}
 }

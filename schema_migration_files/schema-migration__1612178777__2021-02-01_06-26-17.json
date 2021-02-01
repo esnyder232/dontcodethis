@@ -1,0 +1,1 @@
+{"filename":"schema-migration__1612178777__2021-02-01_06-26-17","dtCreated":"2021-02-01_06-26-17","dtCreated_X":"1612178777","migrations":[{"ts_log_time":"2021-02-01T10:53:51.905Z","txt_message":"alter table route\r\nadd b_external boolean\r\n"},{"ts_log_time":"2021-02-01T10:54:10.412Z","txt_message":"alter table route\r\nadd txt_ext_url text\r\n"}]}

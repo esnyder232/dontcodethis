@@ -30,7 +30,9 @@ class AppController {
 			if(!bError)
 			{
 				sqlStr = `
-				select r.uid, r.txt_module_name, r.txt_module_dir || '/' || r.txt_module_name as module_full_path, coalesce(u.txt_route_url, r.txt_module_name) as txt_route_url
+				select r.uid
+				, r.txt_module_name, r.txt_module_dir || '/' || r.txt_module_name as module_full_path
+				, coalesce(u.txt_route_url, r.txt_module_name) as txt_route_url
 				from (
 					select *
 					from route 
@@ -47,16 +49,21 @@ class AppController {
 				) r
 				left join route_urls u on r.txt_module_name = u.txt_module_name
 				order by r.uid, u.uid;
-
-				select r.uid, r.txt_module_name, n.txt_display_name, n.i_order
+				
+				select r.uid
+				, r.txt_module_name
+				, n.txt_display_name
+				, n.i_order
+				, coalesce(r.b_external, false) as b_external
+				, txt_ext_url
 				from (
 					select *
 					from route 
 					where i_delete_flag is null
 					and coalesce(b_admin, false) = false
-					
+				
 					union all
-					
+				
 					select *
 					from route
 					where i_delete_flag is null
