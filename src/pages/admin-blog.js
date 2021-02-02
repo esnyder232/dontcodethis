@@ -31,7 +31,7 @@ export class AdminBlog {
 		{
 			tinymce.init({
 				selector: '#tinyBody',
-				plugins: ['paste', 'link', 'image', 'table']
+				plugins: ['paste', 'link', 'image', 'table', 'media']
 			}).then((editor) => {
 				this.mytiny = editor;
 			});
@@ -46,7 +46,7 @@ export class AdminBlog {
 
 		tinymce.init({
 			selector: '#tinyBody',
-			plugins: ['paste', 'link', 'image', 'table']
+			plugins: ['paste', 'link', 'image', 'table', 'media']
 		}).then((editor) => {
 			this.mytiny = editor;
 		});
