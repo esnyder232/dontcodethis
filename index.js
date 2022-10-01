@@ -1,6 +1,20 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+
+
+
+
+const bodyParser = require('body-parser');
+
+ 
+
+
+
+
+
+
+
 const app = express();
 const port = 5000;
 const db = require.main.require('./db.js');
@@ -36,6 +50,7 @@ var MW_GetUserData = async function (req, res, next) {
 
 	try
 	{
+		
 		//get signed cookie and see if the session exists
 		 sessionCookie = req.signedCookies["session"];
 
@@ -83,6 +98,13 @@ var MW_GetUserData = async function (req, res, next) {
 
 	next();
 }
+
+//extends the limit for the body from 100KB to 50MB
+app.use(bodyParser.urlencoded({
+    parameterLimit: 100000,
+    limit: '50mb',
+    extended: true
+}));
 
 //this puts the "X-Real_Ip" header set by the proxy to be the req.ip string in the request objects.
 app.set("trust proxy", true);
